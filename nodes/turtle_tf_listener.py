@@ -9,18 +9,26 @@ import geometry_msgs.msg
 from std_msgs.msg import String
 import turtlesim.srv
 
+recent_key = 'none'
+
 def key_callback(data):
     # print("---received key:   " + str(data.data) + "\r")
+    global recent_key
     if data.data == '1':
-        speechPub.publish("one")
+        recent_key = 'object'
+        #speechPub.publish("object")
     elif data.data == '2':
-        speechPub.publish("two")
+        recent_key = 'other'
+        #speechPub.publish("other")
     elif data.data == '3':
-        speechPub.publish("three")
+        recent_key = 'uhum'
+        #speechPub.publish("uhum")
     elif data.data == '4':
-        speechPub.publish("four")
+        recent_key = 'none'
+        #speechPub.publish("none")
     else:
-        speechPub.publish("n/a")
+        recent_key = 'none'
+        #speechPub.publish("none")
 
 
 if __name__ == '__main__':
@@ -38,13 +46,13 @@ if __name__ == '__main__':
     speechPub = rospy.Publisher('speech', String, queue_size=50)
     rospy.Subscriber("key", String, key_callback)
 
-    rate = rospy.Rate(10.0)
+    rate = rospy.Rate(1.0)
     while not rospy.is_shutdown():
-        print("\r")
+        #print("\r")
         try:
             (trans,rot) = listener.lookupTransform('/turtle1', '/world', rospy.Time(0))
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-            print("exception")
+            #print("exception")
             continue
 
         
@@ -60,5 +68,6 @@ if __name__ == '__main__':
         
 
         gazePub.publish(rotationStr)
+        speechPub.publish(recent_key)
 
         rate.sleep()

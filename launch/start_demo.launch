@@ -13,6 +13,8 @@
     </node>
     <node pkg="gaze_turtle" type="turtle_tf_listener.py" 
           name="listener" output="screen"/>
-    <node pkg="gaze_turtle" type="gaze_speech_listener.py" 
-          name="gaze_speech_listener" output="screen"/>
+    <!--<node pkg="gaze_turtle" type="gaze_speech_listener.py" 
+          name="gaze_speech_listener" output="screen"/>-->
+    <node pkg="gaze_turtle" type="hmm.py" 
+          name="hmm" output="screen"/>
   </launch>
