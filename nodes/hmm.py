@@ -12,9 +12,9 @@ P_engaged = {
 
 states = ['engaged', 'not_engaged', 'disinterested', 'thinking']
 
-# obs_probs['gaze']['@robot']['engaged'] =
+# human_speech_obs_probs['gaze']['@robot']['engaged'] =
 # P(gaze = @robot | X = engaged)
-obs_probs = {
+human_speech_obs_probs = {
   'gaze' : {
     '@robot' : {
       'engaged' : .5,
@@ -63,9 +63,32 @@ obs_probs = {
   }
 }
 
-# transition_probs['engaged']['not_engaged'] = 
-# P(X_next = engaged | X_prev = not_engaged)
-transition_probs = {
+# robot_speech_obs_probs['@robot']['engaged'] =
+# P(gaze = @robot | X = engaged)
+robot_speech_obs_probs = {
+  '@robot' : {
+    'engaged' : .6,
+    'not_engaged' : .2,
+    'disinterested' : .2,
+    'thinking' : .25,
+  },
+  '@object' : {
+    'engaged' : .3,
+    'not_engaged' : .2,
+    'disinterested' : .35,
+    'thinking' : .5,
+  },
+  '@none' : {
+    'engaged' : .1,
+    'not_engaged' : .6,
+    'disinterested' : .45,
+    'thinking' : .25,
+  }
+}
+
+# human_speech_transition_probs['engaged']['not_engaged'] = 
+# P(X_next = not_engaged | X_prev = engaged)
+human_speech_transition_probs = {
   'engaged' : {
     'engaged' : 12./31.,
     'not_engaged' : 9./31.,
@@ -92,31 +115,75 @@ transition_probs = {
   }
 }
 
-combined_obs_probs = {}
+# robot_speech_transition_probs['engaged']['not_engaged'] = 
+# P(X_next = not_engaged | X_prev = engaged)
+robot_speech_transition_probs = {
+  'engaged' : {
+    'engaged' : 0.6,
+    'not_engaged' : 0.05,
+    'disinterested' : 0.2,
+    'thinking' : 0.15,
+  },
+  'not_engaged' : {
+    'engaged' : 0.5,
+    'not_engaged' : 0.4,
+    'disinterested' : 0.05,
+    'thinking' : 0.05,
+  },
+  'disinterested' : {
+    'engaged' : 0.2,
+    'not_engaged' : 0.3,
+    'disinterested' : 0.4,
+    'thinking' : 0.1,
+  },
+  'thinking' : {
+    'engaged' : 0.7,
+    'not_engaged' : 0.05,
+    'disinterested' : 0.05,
+    'thinking' : 0.2,
+  }
+}
 
+final_trans_probs = {
+  'robot_speech' : robot_speech_transition_probs,
+  'human_speech' : human_speech_transition_probs
+}
+
+final_obs_probs = {
+  'robot_speech' : robot_speech_obs_probs,
+  'human_speech' : {}
+}
 
 class GazeHMM():
   def __init__(self):
-    for tran in transition_probs:
-      assert 1 - sum(transition_probs[tran].values()) < .0001
+    for tran in human_speech_transition_probs:
+      assert 1 - sum(human_speech_transition_probs[tran].values()) < .0001
+    for tran in robot_speech_transition_probs:
+      assert 1 - sum(robot_speech_transition_probs[tran].values()) < .0001
 
     # Process individual event observation probabilities, combine them into
     # single observation.
+    comb_probs = final_obs_probs['human_speech']
     for gaze_o, speech_o in itertools.product(
-        obs_probs['gaze'].keys(),
-        obs_probs['speech'].keys()):
-      combined_obs_probs[gaze_o + speech_o] = {}
+        human_speech_obs_probs['gaze'].keys(),
+        human_speech_obs_probs['speech'].keys()):
+      comb_probs[gaze_o + speech_o] = {}
       for state in states: 
-        combined_obs_probs[gaze_o + speech_o][state] = \
-            obs_probs['gaze'][gaze_o][state] * \
-            obs_probs['speech'][speech_o][state]
+        comb_probs[gaze_o + speech_o][state] = \
+            human_speech_obs_probs['gaze'][gaze_o][state] * \
+            human_speech_obs_probs['speech'][speech_o][state]
 
     for state in states:
       s = 0
       for gaze_o, speech_o in itertools.product(
-          obs_probs['gaze'].keys(),
-          obs_probs['speech'].keys()):
-        s += combined_obs_probs[gaze_o + speech_o][state]
+          human_speech_obs_probs['gaze'].keys(),
+          human_speech_obs_probs['speech'].keys()):
+        s += final_obs_probs['human_speech'][gaze_o + speech_o][state]
+      assert 1 - s < .0001
+    for state in states:
+      s = 0
+      for gaze_o in robot_speech_obs_probs.keys():
+        s += robot_speech_obs_probs[gaze_o][state]
       assert 1 - s < .0001
     
     # Initial belief state
@@ -126,6 +193,7 @@ class GazeHMM():
       'disinterested' : 0.,
       'thinking' : 0.
     }
+    self.who_is_talking = 'robot_speech'
     rospy.Subscriber('gaze', String, lambda x: self.get_gaze(x))
     rospy.Subscriber('speech', String, lambda x: self.get_speech(x))
 
@@ -140,43 +208,39 @@ class GazeHMM():
 
   def transition(self):
     new_belief = {
-      'engaged' : 0,
-      'not_engaged' : 0,
-      'disinterested' : 0,
-      'thinking' : 0,
+      'engaged' : 0.,
+      'not_engaged' : 0.,
+      'disinterested' : 0.,
+      'thinking' : 0.,
     }
+    trans_probs = final_trans_probs[self.who_is_talking]
     for next_s in states:
       for prev_s in states:
-        new_belief[next_s] += self.belief[prev_s] * \
-        transition_probs[next_s][prev_s]
-
-    # Normalize probs
-    total = sum(new_belief.values())
-    for state in states:
-      new_belief[state] /= total
+        new_belief[next_s] += self.belief[prev_s] * trans_probs[prev_s][next_s]
     
     return new_belief
 
-  def observe(self, gaze_o, speech_o):
+  def observe(self, cur_obs):
     new_belief = {
       'engaged' : 0,
       'not_engaged' : 0,
       'disinterested' : 0,
       'thinking' : 0,
     }
+    obs_probs = final_obs_probs[self.who_is_talking]
     for state in states:
-      new_belief[state] = combined_obs_probs[gaze_o + speech_o][state] * \
-                          self.belief[state]
-      new_belief[state] /= self.P_obs(gaze_o, speech_o)
+      new_belief[state] = obs_probs[cur_obs][state] * self.belief[state]
+      new_belief[state] /= self.P_obs(cur_obs)
+
     return new_belief
 
   # P(gaze = gaze_o ^ speech = speech_o) = 
   # sum for all states: P(obs | state) * P(state)
-  def P_obs(self, gaze_o, speech_o):
+  def P_obs(self, cur_obs):
     result = 0
+    obs_probs = final_obs_probs[self.who_is_talking]
     for state in self.belief:
-      result += combined_obs_probs[gaze_o + speech_o][state] * \
-                self.belief[state]
+      result += obs_probs[cur_obs][state] * self.belief[state]
     return result
 
   def cur_state(self):
@@ -203,8 +267,12 @@ class GazeHMM():
       gaze_o, speech_o = self.get_current_obs()
       if gaze_o and speech_o:
         #print "Best guess: " + self.cur_state()
+        if self.who_is_talking == 'robot_speech':
+          cur_obs = gaze_o
+        else:
+          cur_obs = gaze_o + speech_o
         self.belief = self.transition()
-        self.belief = self.observe(gaze_o, speech_o)
+        self.belief = self.observe(cur_obs)
 
       print '\r'
       print self.gazes
