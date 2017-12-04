@@ -15,9 +15,12 @@
           name="listener" output="screen"/>
     <node pkg="gaze_turtle" type="hmm.py" 
           name="hmm" output="screen"/>
+<<<<<<< HEAD
     <node pkg="gaze_turtle" type="gaze_detector.py" 
           name="gaze_detector" output="screen"/>
+  </launch>
+=======
     <node pkg="gaze_turtle" type="robot_speech.py" 
           name="robot_speech" output="screen"/>
  </launch>
-
+>>>>>>> 05b8dc02c772bed5edb286b9d96f91b6164c69be

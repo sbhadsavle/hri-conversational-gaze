@@ -15,6 +15,9 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   std_msgs
   object_detector
+  geometry_msgs
+  hlpr_perception_msgs
+  sensor_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -77,6 +80,9 @@ generate_messages(
   DEPENDENCIES
   std_msgs  # Or other packages containing msgs
   object_detector
+  hlpr_perception_msgs
+  geometry_msgs
+  sensor_msgs
 )
 
 ################################################
@@ -111,7 +117,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES gaze_turtle
-   CATKIN_DEPENDS roscpp rospy tf turtlesim message_runtime
+   CATKIN_DEPENDS roscpp rospy tf turtlesim message_runtime geometry_msgs hlpr_perception_msgs sensor_msgs
 #  DEPENDS system_lib
 )
 

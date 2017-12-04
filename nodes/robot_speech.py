@@ -17,7 +17,7 @@ class RobotSpeech():
 
 
   def __init__(self):
-    rospy.Subscriber('cmd', speech, lambda x: self.get_cmd(x))
+    rospy.Subscriber('speech_cmd', speech, lambda x: self.get_cmd(x))
     self.broadcast = rospy.Publisher('speech_status', String, queue_size=20)
 
     self.cmds = []
@@ -38,6 +38,9 @@ class RobotSpeech():
 
 
   def interrupt(self, speech):
+    if self.interrupting:
+      return
+
     self.interrupting = speech
     if self.cur_speech:
       print('Terminating!')
