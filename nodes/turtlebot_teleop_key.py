@@ -125,7 +125,7 @@ if __name__=="__main__":
                 th = 0
                 control_speed = 0
                 control_turn = 0
-            elif key == '1' or key == '2' or key == '3' or key == '4':
+            elif key == '1' or key == '2' or key == '3' or key == '4' or key == '5' or key == '6' or key == '7':
                 keyPub.publish(key)
             else:
                 count = count + 1
