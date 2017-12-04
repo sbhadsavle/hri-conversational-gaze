@@ -17,4 +17,6 @@
           name="gaze_speech_listener" output="screen"/>-->
     <node pkg="gaze_turtle" type="hmm.py" 
           name="hmm" output="screen"/>
-  </launch>
+    <node pkg="gaze_turtle" type="robot_speech.py" 
+          name="robot_speech" output="screen"/>
+ </launch>
