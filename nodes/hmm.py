@@ -67,15 +67,15 @@ human_speech_obs_probs = {
 # P(gaze = @robot | X = engaged)
 robot_speech_obs_probs = {
   '@robot' : {
-    'engaged' : .6,
+    'engaged' : .75,
     'not_engaged' : .2,
-    'disinterested' : .2,
+    'disinterested' : .05,
     'thinking' : .25,
   },
   '@object' : {
-    'engaged' : .3,
+    'engaged' : .15,
     'not_engaged' : .2,
-    'disinterested' : .35,
+    'disinterested' : .5,
     'thinking' : .5,
   },
   '@none' : {
@@ -119,9 +119,9 @@ human_speech_transition_probs = {
 # P(X_next = not_engaged | X_prev = engaged)
 robot_speech_transition_probs = {
   'engaged' : {
-    'engaged' : 0.6,
+    'engaged' : 0.7,
     'not_engaged' : 0.05,
-    'disinterested' : 0.2,
+    'disinterested' : 0.1,
     'thinking' : 0.15,
   },
   'not_engaged' : {
@@ -276,8 +276,12 @@ class GazeHMM():
 
       print '\r'
       print self.gazes
+      print '\r'
       print self.speeches
+      print '\r'
       print "Belief: " + self.cur_state()
+      print '\r'
+      print self.belief
       rate.sleep()
 
 
