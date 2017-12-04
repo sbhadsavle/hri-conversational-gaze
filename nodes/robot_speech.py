@@ -67,3 +67,10 @@ class RobotSpeech():
             self.broadcast.publish('SPEECH_DONE')
 
         self.say(next_speech, done_talking)
+
+if __name__ == '__main__':
+  try:
+    speech = RobotSpeech()
+    speech.run()
+  except rospy.ROSInterruptException:
+    pass
