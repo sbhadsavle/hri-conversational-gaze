@@ -3,12 +3,16 @@
 import itertools
 import rospy
 import random
+from gaze_turtle.msg import speech
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist, Vector3
 
-P_engaged = {
-
-}
+conversation = [
+  "Hello, my name is Poli!",
+  "I'm here to show you my cool new gaze detection functionality.",
+  "The team that coded me is Asad, Cassidy, Priyanka, and Sarang",
+  "How about that blue pitcher on the table? Seems pretty cool huh?",
+]
 
 states = ['engaged', 'not_engaged', 'disinterested', 'thinking']
 
@@ -199,6 +203,8 @@ class GazeHMM():
 
     self.gazes = ['@none']
     self.speeches = ['none']
+    self.talking = False
+    self.beliefs = []
 
   def get_gaze(self, gaze_o):
     self.gazes.append(gaze_o.data)
@@ -262,6 +268,7 @@ class GazeHMM():
 
   def run(self):
     rospy.init_node('GazeHMM', anonymous=True)
+    talker = rospy.Publisher('speech_cmd', speech, queue_size=20)
     rate = rospy.Rate(1) # 1hz
     while not rospy.is_shutdown():
       gaze_o, speech_o = self.get_current_obs()
@@ -273,7 +280,20 @@ class GazeHMM():
           cur_obs = gaze_o + speech_o
         self.belief = self.transition()
         self.belief = self.observe(cur_obs)
+        self.beliefs.append(self.cur_state())
 
+      if len(self.beliefs) > 1:
+        '''if self.beliefs[-1] == 'engaged' and self.beliefs[-2] == 'not_engaged':
+          talker.publish(speech('talk', conversation)) 
+
+        if self.beliefs[-1] == 'disinterested':
+          talker.publish(speech('interrupt', ["Oh got a call on your phone? Well...like I was saying..."]))'''
+        if self.beliefs[-1] != self.beliefs[-2]:
+          belief = self.beliefs[-1]
+          if belief == 'not_engaged':
+            belief = 'not engaged'
+          talker.publish(speech('talk', [belief]))
+        
       print '\r'
       print self.gazes
       print '\r'
