@@ -9,4 +9,6 @@
           name="hmm"/>
     <node pkg="gaze_turtle" type="robot_speech.py" 
           name="robot_speech"/>
+    <node pkg="gaze_turtle" type="gaze_detector.py" 
+          name="gaze_detector" output="screen"/>
  </launch>
