@@ -6,6 +6,12 @@ import subprocess
 from std_msgs.msg import String
 from gaze_turtle.msg import speech
 
+IDLE = 0
+PAUSE = 1
+CONTINUE = 2
+INTERRUPT = 3
+CLEAR = 4
+
 class RobotSpeech():
 
   def run_and_wait(self, cmd, callback):
@@ -21,36 +27,53 @@ class RobotSpeech():
     self.broadcast = rospy.Publisher('speech_status', String, queue_size=20)
 
     self.cmds = []
-    self.speech_list = []
+    self.speech_stack = [IDLE]
     self.interrupting = None
     self.talking = False
     self.cur_speech = None
 
   def get_cmd(self, cmd):
     self.cmds.append(cmd)
- 
-  def say(self, speech, callback):
-    print('Saying: %s', speech)
-    self.talking = True
-    cmd = ['espeak', '-s', '120', '-v', 'en', speech]
-    self.t = threading.Thread(target=self.run_and_wait, args=(cmd, callback))
-    self.t.start()
 
-
-  def interrupt(self, speech):
-    if self.interrupting:
-      return
-
-    self.interrupting = speech
+  def clear(self):
+    print('Clearing speech')
+    self.talking = False
     if self.cur_speech:
       print('Terminating!')
       self.cur_speech.terminate()
       self.cur_speech = None
-    def done_interrupting():
-      self.interrupting = None
+    self.interrupting = None
+    self.speech_stack = []
+ 
+  def say(self, speech):
+    print('Saying: %s', speech)
+    def done_talking():
+      self.speech_stack.pop()
+      self.talking = False
+      self.cur_speech = None
+      if not self.speech_stack:
+        self.broadcast.publish('SPEECH_DONE')
+
+    self.talking = True
+    cmd = ['espeak', '-s', '120', '-v', 'en', speech]
+    self.t = threading.Thread(target=self.run_and_wait, args=(cmd, done_talking))
+    self.t.start()
+
+  def terminate(self):
+    if self.cur_speech:
+      print('Terminating!')
+      self.cur_speech.terminate()
+      self.cur_speech = None
       self.talking = False
 
-    self.say(speech, done_interrupting)
+  def interrupt(self, speech):
+    if INTERRUPT in self.speech_stack:
+      return
+
+    self.terminate()
+    self.speech_stack.append(PAUSE)
+    self.speech_stack.append(INTERRUPT)
+    self.speech_stack.append(speech)
 
   def get_next_cmd(self):
     if not self.cmds:
@@ -65,21 +88,36 @@ class RobotSpeech():
       while self.cmds:
         cmd = self.get_next_cmd()
         print(cmd)
+        if cmd.cmd == 'clear':
+          self.speech_stack.append(CLEAR)
+          self.speech_stack.append(cmd.data)
         if cmd.cmd == 'talk':
-          self.speech_list.extend(cmd.data)
+          self.speech_stack.extend(cmd.data[::-1])
+          self.speech_stack.append(PAUSE)
         if cmd.cmd == 'interrupt':
           self.interrupt(cmd.data[0])
+        if cmd.cmd == 'continue':
+          self.speech_stack.append(CONTINUE)
 
-      if not self.talking and self.speech_list:
-        next_speech = self.speech_list[0]
-        def done_talking():
-          self.speech_list.pop(0)
-          self.talking = False
-          self.cur_speech = None
-          if not self.speech_list:
-            self.broadcast.publish('SPEECH_DONE')
-
-        self.say(next_speech, done_talking)
+      if not self.talking and self.speech_stack:
+        next_speech = self.speech_stack[-1]
+        if next_speech == IDLE:
+          continue
+        elif next_speech == PAUSE:
+          continue
+        elif next_speech == CONTINUE:
+          print '\r'
+          print 'CONTINUE'  
+          try:
+            idx = self.speech_stack[::-1].index(PAUSE)
+            self.speech_stack.pop(len(self.speech_stack) - 1 - idx)
+          except:
+            pass
+          self.speech_stack.pop()
+        elif next_speech == INTERRUPT:
+          self.speech_stack.pop()
+        else:
+          self.say(next_speech)
 
 if __name__ == '__main__':
   try:

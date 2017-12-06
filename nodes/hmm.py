@@ -8,10 +8,15 @@ from std_msgs.msg import String
 from geometry_msgs.msg import Twist, Vector3
 
 conversation = [
-  "Hello, my name is Poli!",
-  "I'm here to show you my cool new gaze detection functionality.",
-  "The team that coded me is Asad, Cassidy, Priyanka, and Sarang",
-  "How about that blue pitcher on the table? Seems pretty cool huh?",
+  [
+    "Hello, my name is Poli!",
+    "I'm here to show you my cool new gaze detection functionality.",
+    "The team that coded me is Asad, Cassidy, Priyanka, and Sarang",
+    "How about that blue pitcher on the table? Seems pretty cool huh?",
+  ],
+  [
+    "This is me talking for the second time!",
+  ]
 ]
 
 states = ['engaged', 'not_engaged', 'disinterested', 'thinking']
@@ -197,9 +202,12 @@ class GazeHMM():
       'disinterested' : 0.,
       'thinking' : 0.
     }
-    self.who_is_talking = 'robot_speech'
+    self.who_is_talking = None
+    self.who_is_talking_list = ['robot_speech'] # Robot always starts convo
+    self.conversation_state = 0
     rospy.Subscriber('gaze', String, lambda x: self.get_gaze(x))
     rospy.Subscriber('speech', String, lambda x: self.get_speech(x))
+    rospy.Subscriber('who_is_talking', String, lambda x: self.get_who_is_talking(x))
 
     self.gazes = ['@none']
     self.speeches = ['none']
@@ -211,6 +219,9 @@ class GazeHMM():
 
   def get_speech(self, speech_o):
     self.speeches.append(speech_o.data)
+
+  def get_who_is_talking(self, who_is_talking):
+    self.who_is_talking_list.append(who_is_talking.data)
 
   def transition(self):
     new_belief = {
@@ -266,12 +277,35 @@ class GazeHMM():
     
     return gaze_o, speech_o
 
+  def human_talking_action(self, prev_state, new_state):
+    pass
+
+  def robot_talking_action(self, prev_state, new_state):
+    if new_state == 'disinterested':
+      if prev_state != 'not_engaged':
+        self.talker.publish(speech('interrupt', ["Hey are you still interested?"]))
+    if new_state == 'engaged':
+      if prev_state != 'thinking':
+        self.talker.publish(speech('continue', []))
+    if new_state == 'not_engaged':
+      self.talker.publish(speech('interrupt', ["Oh I understand...goodbye."]))
+
   def run(self):
     rospy.init_node('GazeHMM', anonymous=True)
-    talker = rospy.Publisher('speech_cmd', speech, queue_size=20)
+    self.talker = rospy.Publisher('speech_cmd', speech, queue_size=20)
+    # Hack to wait for speech_cmd to come online
+    while self.talker.get_num_connections() == 0:
+      pass
+
     rate = rospy.Rate(1) # 1hz
     while not rospy.is_shutdown():
       gaze_o, speech_o = self.get_current_obs()
+      who_is_talking_changed = False
+      if self.who_is_talking_list:
+        self.who_is_talking = self.who_is_talking_list.pop(0)
+        print 'Who is talking changed: %s' % self.who_is_talking
+        who_is_talking_changed = True
+
       if gaze_o and speech_o:
         #print "Best guess: " + self.cur_state()
         if self.who_is_talking == 'robot_speech':
@@ -282,17 +316,22 @@ class GazeHMM():
         self.belief = self.observe(cur_obs)
         self.beliefs.append(self.cur_state())
 
-      if len(self.beliefs) > 1:
-        '''if self.beliefs[-1] == 'engaged' and self.beliefs[-2] == 'not_engaged':
-          talker.publish(speech('talk', conversation)) 
+      if who_is_talking_changed:
+        self.talker.publish(speech('clear', []))
+        if self.who_is_talking == 'robot_speech':
+          cur_convo = conversation[self.conversation_state]
+          self.talker.publish(speech('talk', cur_convo))
+        else:
+          self.conversation_state += 1
 
-        if self.beliefs[-1] == 'disinterested':
-          talker.publish(speech('interrupt', ["Oh got a call on your phone? Well...like I was saying..."]))'''
+      if len(self.beliefs) > 1:
         if self.beliefs[-1] != self.beliefs[-2]:
-          belief = self.beliefs[-1]
-          if belief == 'not_engaged':
-            belief = 'not engaged'
-          talker.publish(speech('talk', [belief]))
+          prev_state = self.beliefs[-2]
+          next_state = self.beliefs[-1]
+          if self.who_is_talking == 'robot_speech':
+            self.robot_talking_action(prev_state, next_state)
+          else:
+            self.human_talking_action(prev_state, next_state)
         
       print '\r'
       print self.gazes
