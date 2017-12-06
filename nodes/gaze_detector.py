@@ -1,20 +1,21 @@
 #!/usr/bin/env python  
 #Priyanka Khante (pk7426)
-#Deduces if the human is looking at the "robot, object, other" and publishes to a topic
+#Deduces if the human is looking at the "@robot, @object, @other" and publishes to the gaze topic
 # PARAMETERS TO REMEMBER: Manhattan distance Threshold: 160, Robot's head at 0.3 tilt. Red markings on the table and the floor are ours.
 import rospy
 from object_detector.msg import GazeTopic
 from std_msgs.msg import String
-from random import randint
-import time
+from collections import Counter
 
 gazePub = rospy.Publisher('gaze', String, queue_size=50)
 predict_object = [4.5, 250, 315.5, 539]
 predict_other = [613.5, 299, 804.5, 512]
+gaze_list = []
 
 def gaze_callback(data):
 	print("Received:   " + str(data.mutual) + "\r")
 	gaze_str = ""
+	final_gaze_str = ""
 	gaze_other = False
 
 	# For mutual gaze
@@ -31,7 +32,10 @@ def gaze_callback(data):
 				gaze_str = "@object"
 			if (data.coordinates.data[0]>predict_other[0] and data.coordinates.data[0]<predict_other[2]) and (data.coordinates.data[1]>predict_other[1] and data.coordinates.data[1]<predict_other[3]): 
 				gaze_str = "@other"
-	gazePub.publish(gaze_str)
+
+	if gaze_str:
+		gaze_list.append(gaze_str)
+	#print("Gaze list: ", gaze_list)
 
     
 def listener():
@@ -45,12 +49,21 @@ def listener():
     rospy.Subscriber("/object_detector_bridge", GazeTopic, gaze_callback)
 
     # spin() simply keeps python from exiting until this node is stopped
-    rospy.spin()
+    #rospy.spin()
+    rate = rospy.Rate(1)
+    while not rospy.is_shutdown():
+	rate.sleep()
+	if gaze_list:
+		count = Counter(gaze_list)
+		#print("Gaze list: ", gaze_list)
+		final_gaze_str = count.most_common()[0]
+		del gaze_list[:]
+		gazePub.publish(final_gaze_str[0])
+
 
 if __name__ == '__main__':
     listener()
-    starttime = time.time()
-
+   
 # DELETE LATER - Randomly generate OTHER for a certain time duration
 		#if randint(0,1) == 1:
 			#print("Here")
