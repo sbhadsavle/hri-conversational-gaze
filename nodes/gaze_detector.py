@@ -35,7 +35,6 @@ def gaze_callback(data):
 
 	if gaze_str:
 		gaze_list.append(gaze_str)
-	#print("Gaze list: ", gaze_list)
 
     
 def listener():
@@ -55,10 +54,12 @@ def listener():
 	rate.sleep()
 	if gaze_list:
 		count = Counter(gaze_list)
-		#print("Gaze list: ", gaze_list)
-		final_gaze_str = count.most_common()[0]
+		print("Gaze list: ", gaze_list)
+		final_gaze_str = count.most_common()[0][0]
+		if count["@robot"] / len(gaze_list) > 0.25:
+			final_gaze_str = "@robot"
 		del gaze_list[:]
-		gazePub.publish(final_gaze_str[0])
+		gazePub.publish(final_gaze_str)
 
 
 if __name__ == '__main__':
