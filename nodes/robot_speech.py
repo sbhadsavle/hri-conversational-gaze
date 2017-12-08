@@ -37,13 +37,9 @@ class RobotSpeech():
 
   def clear(self):
     print('Clearing speech')
-    self.talking = False
-    if self.cur_speech:
-      print('Terminating!')
-      self.cur_speech.terminate()
-      self.cur_speech = None
+    self.terminate()
     self.interrupting = None
-    self.speech_stack = []
+    self.speech_stack = [IDLE]
  
   def say(self, speech):
     print('Saying: %s', speech)
@@ -90,7 +86,6 @@ class RobotSpeech():
         print(cmd)
         if cmd.cmd == 'clear':
           self.speech_stack.append(CLEAR)
-          self.speech_stack.append(cmd.data)
         if cmd.cmd == 'talk':
           self.speech_stack.extend(cmd.data[::-1])
           self.speech_stack.append(PAUSE)
@@ -116,6 +111,8 @@ class RobotSpeech():
           self.speech_stack.pop()
         elif next_speech == INTERRUPT:
           self.speech_stack.pop()
+        elif next_speech == CLEAR:
+          self.clear()
         else:
           self.say(next_speech)
 

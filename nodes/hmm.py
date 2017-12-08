@@ -202,8 +202,8 @@ class GazeHMM():
       'disinterested' : 0.,
       'thinking' : 0.
     }
-    self.who_is_talking = None
-    self.who_is_talking_list = ['robot_speech'] # Robot always starts convo
+    self.who_is_talking = 'robot_speech' # Robot always starts convo
+    self.who_is_talking_list = []
     self.conversation_state = 0
     rospy.Subscriber('gaze', String, lambda x: self.get_gaze(x))
     rospy.Subscriber('speech', String, lambda x: self.get_speech(x))
@@ -302,7 +302,8 @@ class GazeHMM():
       gaze_o, speech_o = self.get_current_obs()
       who_is_talking_changed = False
       if self.who_is_talking_list:
-        self.who_is_talking = self.who_is_talking_list.pop(0)
+        self.who_is_talking_list.pop(0)
+        self.who_is_talking = "robot_speech" if self.who_is_talking == "human_speech" else "human_speech"
         print 'Who is talking changed: %s' % self.who_is_talking
         who_is_talking_changed = True
 

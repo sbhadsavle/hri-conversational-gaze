@@ -5,7 +5,7 @@
    <!-- Example of how to have multiple yaml files -->
    <!-- WARNING: currently if there are duplicate keys, the 2nd file will overwrite the first -->
    <!--arg name="yaml_list" default="$(find hlpr_speech_recognition)/data/kps.yaml, $(find hlpr_speech_recognition)/data/kps.yaml" /-->
-   <arg name="yaml_list" default="$(find hlpr_speech_recognition)/data/gaze.yaml" />
+   <arg name="yaml_list" default="$(find gaze_turtle)/launch/gaze.yaml" />
    <arg name="speech_config_file" default="$(find hlpr_speech_recognition)/config/speech.yaml" />
 
    <!-- Load parameters for speech -->
