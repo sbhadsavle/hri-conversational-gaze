@@ -1,0 +1,38 @@
+tag: "Speech: About Object"
+speech: ["SPEECH: ABOUT OBJECT"]
+
+tag: "Speech: Uhum"
+speech: ["SPEECH: UHUM"]
+
+tag: "Speech: No speech"
+speech: ["SPEECH: NO SPEECH"]
+
+tag: "Speech: Any other speech"
+speech: ["SPEECH: ANY OTHER SPEECH"]
+
+tag: "State: Engaged"
+speech: ["STATE: ENGAGED"]
+
+tag: "State: Not engaged"
+speech: ["STATE: NOT ENGAGED"]
+
+tag: "State: Thinking"
+speech: ["STATE: THINKING"]
+
+tag: "State: Disinterested"
+speech: ["STATE: DISINTERESTED"]
+
+tag: "Switch Speaker"
+speech: ["SWITCH SPEAKER"]
+
+
+
+
+
+
+
+
+
+
+
+

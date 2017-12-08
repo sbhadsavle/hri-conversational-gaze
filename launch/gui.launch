@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+
+   <!-- Params for the speech listener - used for real or fake speech -->
+   <!-- Example of how to have multiple yaml files -->
+   <!-- WARNING: currently if there are duplicate keys, the 2nd file will overwrite the first -->
+   <!--arg name="yaml_list" default="$(find hlpr_speech_recognition)/data/kps.yaml, $(find hlpr_speech_recognition)/data/kps.yaml" /-->
+   <arg name="yaml_list" default="$(find hlpr_speech_recognition)/data/gaze.yaml" />
+   <arg name="speech_config_file" default="$(find hlpr_speech_recognition)/config/speech.yaml" />
+
+   <!-- Load parameters for speech -->
+    <!-- Start the speech_listener node recording action server -->
+    <include file="$(find hlpr_speech_recognition)/launch/speech_listener.launch">
+         <arg name="config_file" value="$(arg speech_config_file)"/>
+         <arg name="yaml_list" value="$(arg yaml_list)"/>
+    </include>
+
+    <!-- Start the GUI if speech_gui set to true -->
+    <node name="speech_gui" pkg="hlpr_speech_recognition" type="speech_gui" respawn="false" output="screen" />
+
+    
+</launch>
