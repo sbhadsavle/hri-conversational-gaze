@@ -31,7 +31,7 @@ def gaze_callback(data):
 			if (data.coordinates.data[0]>predict_object[0] and data.coordinates.data[0]<predict_object[2]) and (data.coordinates.data[1]>predict_object[1] and data.coordinates.data[1]<predict_object[3]): 
 				gaze_str = "@object"
 			if (data.coordinates.data[0]>predict_other[0] and data.coordinates.data[0]<predict_other[2]) and (data.coordinates.data[1]>predict_other[1] and data.coordinates.data[1]<predict_other[3]): 
-				gaze_str = "@other"
+				gaze_str = "@none"
 
 	if gaze_str:
 		gaze_list.append(gaze_str)
@@ -56,7 +56,7 @@ def listener():
 		count = Counter(gaze_list)
 		print("Gaze list: ", gaze_list)
 		final_gaze_str = count.most_common()[0][0]
-		if count["@robot"] / len(gaze_list) > 0.25:
+		if count["@robot"] / len(gaze_list) > 0.5:
 			final_gaze_str = "@robot"
 		del gaze_list[:]
 		gazePub.publish(final_gaze_str)

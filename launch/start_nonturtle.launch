@@ -1,10 +1,4 @@
   <launch>
-    <node pkg="gaze_turtle" type="turtlebot_teleop_key.py" 
-          name="teleop"/>    
-    <node pkg="gaze_turtle" type="turtle_tf_listener.py" 
-          name="listener" output="screen"/>
-    <node pkg="gaze_turtle" type="gaze_speech_listener.py" 
-          name="gaze_speech_listener" output="screen"/>
     <node pkg="gaze_turtle" type="hmm.py" 
           name="hmm"/>
     <node pkg="gaze_turtle" type="robot_speech.py" 
