@@ -9,10 +9,10 @@ from geometry_msgs.msg import Twist, Vector3
 
 conversation = [
   [
-    "Hello, my name is Poli!",
-    "I'm here to show you my cool new gaze detection functionality.",
-    "The team that coded me is Asad, Cassidy, Priyanka, and Sarang",
-    "How about that blue pitcher on the table? Seems pretty cool huh?",
+    "Hello, my name is Poli!,<break time='1000ms' /> ",
+    "I'm here to show you my cool new gaze detection functionality.,<break time='1000ms' /> ",
+    "The team that coded me is Asad, Cassidy, Priyanka, and Sarang,<break time='1000ms' /> ",
+    "How about that blue pitcher on the table? Seems pretty cool huh?,<break time='1000ms' /> ",
   ],
   [
     "This is me talking for the second time!",
@@ -283,12 +283,12 @@ class GazeHMM():
   def robot_talking_action(self, prev_state, new_state):
     if new_state == 'disinterested':
       if prev_state != 'not_engaged':
-        self.talker.publish(speech('interrupt', ["Hey are you still interested?"]))
+        self.talker.publish(speech('interrupt', [",<break time='1000ms' /> Hey are you still interested?"]))
     if new_state == 'engaged':
       if prev_state != 'thinking':
         self.talker.publish(speech('continue', []))
     if new_state == 'not_engaged':
-      self.talker.publish(speech('interrupt', ["Oh I understand...goodbye."]))
+      self.talker.publish(speech('interrupt', [",<break time='1000ms' /> Oh I understand...goodbye."]))
 
   def run(self):
     rospy.init_node('GazeHMM', anonymous=True)
@@ -333,10 +333,6 @@ class GazeHMM():
           else:
             self.human_talking_action(prev_state, next_state)
         
-      print '\r'
-      print self.gazes
-      print '\r'
-      print self.speeches
       print '\r'
       print "Belief: " + self.cur_state()
       print '\r'

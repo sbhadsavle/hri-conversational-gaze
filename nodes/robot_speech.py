@@ -55,7 +55,7 @@ class RobotSpeech():
         self.broadcast.publish('SPEECH_DONE')
 
     self.talking = True
-    cmd = ['espeak', '-s', '120', '-v', 'en', speech]
+    cmd = ['espeak', '-s', '140', '-m', speech]
     self.t = threading.Thread(target=self.run_and_wait, args=(cmd, done_talking))
     self.t.start()
 

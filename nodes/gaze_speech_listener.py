@@ -42,7 +42,7 @@ def listener():
 
     rate = rospy.Rate(1.0)
     while not rospy.is_shutdown():
-        gazePub.publish(recent_gaze_key)
+        #gazePub.publish(recent_gaze_key)
         speechPub.publish(recent_speech_key)
         print("Publishing:   " + str(recent_speech_key) + ", " + str(recent_gaze_key) +  "\r")
         rate.sleep()
