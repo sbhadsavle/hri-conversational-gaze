@@ -16,7 +16,9 @@
     </include>
 
     <!-- Start the GUI if speech_gui set to true -->
-    <node name="speech_gui" pkg="hlpr_speech_recognition" type="speech_gui" respawn="false" output="screen" />
+   <node pkg="gaze_turtle" type="gui_router.py" 
+        name="gui_router" output="screen"/>
+   <node name="speech_gui" pkg="hlpr_speech_recognition" type="speech_gui" respawn="false" output="screen" />
 
     
 </launch>

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 import itertools
 import rospy
 import random
@@ -164,7 +165,7 @@ final_obs_probs = {
 }
 
 class GazeHMM():
-  def __init__(self):
+  def __init__(self, conversation_num, experiment_type):
     for tran in human_speech_transition_probs:
       assert 1 - sum(human_speech_transition_probs[tran].values()) < .0001
     for tran in robot_speech_transition_probs:
@@ -195,6 +196,9 @@ class GazeHMM():
         s += robot_speech_obs_probs[gaze_o][state]
       assert 1 - s < .0001
     
+    self.conversation_num = conversation_num
+    self.experiment_type = experiment_type
+
     # Initial belief state
     self.belief = {
       'engaged' : 0.,
@@ -214,14 +218,22 @@ class GazeHMM():
     self.talking = False
     self.beliefs = []
 
+    # Woz state!
+    self.woz_state = 'not_engaged'
+    rospy.Subscriber('woz_hmm_state', String, lambda x: self.get_woz(x))
+
   def get_gaze(self, gaze_o):
     self.gazes.append(gaze_o.data)
 
   def get_speech(self, speech_o):
+    print speech_o
     self.speeches.append(speech_o.data)
 
   def get_who_is_talking(self, who_is_talking):
     self.who_is_talking_list.append(who_is_talking.data)
+
+  def get_woz(self, woz):
+    self.woz_state = woz.data
 
   def transition(self):
     new_belief = {
@@ -261,6 +273,8 @@ class GazeHMM():
     return result
 
   def cur_state(self):
+    if self.experiment_type == 'WOZ':
+      return self.woz_state
     return max(self.belief, key=lambda x: self.belief[x])
 
   def get_current_obs(self):
@@ -342,8 +356,16 @@ class GazeHMM():
 
 
 if __name__ == '__main__':
+    assert len(sys.argv) >= 4
+
+    print sys.argv
+    conversation_num = int(sys.argv[1])
+    experiment_type = sys.argv[2]
+
+    assert conversation_num in [1,2,3]
+    assert experiment_type in ["CONTROL","WOZ","HMM"]
     try:
-        hmm = GazeHMM()
+        hmm = GazeHMM(conversation_num, experiment_type)
         hmm.run()
     except rospy.ROSInterruptException:
         pass

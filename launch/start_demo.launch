@@ -1,4 +1,7 @@
   <launch>
+    <arg name="convo" />
+    <arg name="exp" />
+
     <!-- Turtlesim Node-->
     <node pkg="turtlesim" type="turtlesim_node" name="sim"/>
     <!-- <node pkg="turtlesim" type="turtle_teleop_key" name="teleop" output="screen"/> -->
@@ -14,9 +17,7 @@
     <node pkg="gaze_turtle" type="turtle_tf_listener.py" 
           name="listener" output="screen"/>
     <node pkg="gaze_turtle" type="hmm.py" 
-          name="hmm" output="screen"/>
-    <node pkg="gaze_turtle" type="gaze_detector.py" 
-          name="gaze_detector" output="screen"/>
+          name="hmm" args="$(arg convo) $(arg exp)" output="screen"/>
     <node pkg="gaze_turtle" type="robot_speech.py" 
           name="robot_speech" output="screen"/>
  </launch>

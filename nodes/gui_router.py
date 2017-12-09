@@ -27,7 +27,7 @@ class Router():
     }
     data = {
       "SPEECH: ABOUT OBJECT": "object",
-      "SPEECH: UHUM": "uh_um",
+      "SPEECH: UHUM": "uhum",
       "SPEECH: NO SPEECH": "none",
       "SPEECH: ANY OTHER SPEECH": "other",
       "STATE: ENGAGED": "engaged",

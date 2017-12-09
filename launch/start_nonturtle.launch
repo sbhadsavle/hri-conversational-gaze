@@ -1,6 +1,9 @@
   <launch>
+    <arg name="convo" />
+    <arg name="exp" />
+
     <node pkg="gaze_turtle" type="hmm.py" 
-          name="hmm"/>
+          name="hmm" args="$(arg convo) $(arg exp)" output="screen"/>
     <node pkg="gaze_turtle" type="robot_speech.py" 
           name="robot_speech"/>
     <node pkg="gaze_turtle" type="gaze_detector.py" 
