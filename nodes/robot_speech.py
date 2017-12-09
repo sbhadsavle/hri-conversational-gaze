@@ -69,7 +69,7 @@ class RobotSpeech():
     self.terminate()
     self.speech_stack.append(PAUSE)
     self.speech_stack.append(INTERRUPT)
-    self.speech_stack.append(speech)
+    self.speech_stack.append("<break time='1000ms' />,"+speech)
 
   def get_next_cmd(self):
     if not self.cmds:
@@ -87,7 +87,8 @@ class RobotSpeech():
         if cmd.cmd == 'clear':
           self.clear()
         if cmd.cmd == 'talk':
-          self.speech_stack.extend(cmd.data[::-1])
+          for speech in cmd.data[::-1]:
+            self.speech_stack.append(speech+"<break time='1000ms' />,")
           self.speech_stack.append(PAUSE)
         if cmd.cmd == 'interrupt':
           self.interrupt(cmd.data[0])
