@@ -8,16 +8,28 @@ from gaze_turtle.msg import speech
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist, Vector3
 
-conversation = [
+conversations = [
   [
-    "Hello, my name is Poli!,<break time='1000ms' /> ",
-    "I'm here to show you my cool new gaze detection functionality.,<break time='1000ms' /> ",
-    "The team that coded me is Asad, Cassidy, Priyanka, and Sarang,<break time='1000ms' /> ",
-    "How about that blue pitcher on the table? Seems pretty cool huh?,<break time='1000ms' /> ",
+    [
+      "Hello, my name is Poli!,<break time='1000ms' /> ",
+      "I'm here to show you my cool new gaze detection functionality.,<break time='1000ms' /> ",
+      "The team that coded me is Asad, Cassidy, Priyanka, and Sarang,<break time='1000ms' /> ",
+      "How about that blue pitcher on the table? Seems pretty cool huh?,<break time='1000ms' /> ",
+    ],
+    [
+      "This is me talking for the second time!",
+    ]
   ],
   [
-    "This is me talking for the second time!",
-  ]
+    [
+      "Conversation 2!"
+    ],
+  ],
+  [
+    [
+      "Conversation 3!"
+    ],
+  ],
 ]
 
 states = ['engaged', 'not_engaged', 'disinterested', 'thinking']
@@ -196,7 +208,6 @@ class GazeHMM():
         s += robot_speech_obs_probs[gaze_o][state]
       assert 1 - s < .0001
     
-    self.conversation_num = conversation_num
     self.experiment_type = experiment_type
 
     # Initial belief state
@@ -206,9 +217,10 @@ class GazeHMM():
       'disinterested' : 0.,
       'thinking' : 0.
     }
-    self.who_is_talking = 'robot_speech' # Robot always starts convo
-    self.who_is_talking_list = []
+    self.who_is_talking = 'human_speech' # This is misleading, we actually start with robot speech, the 1 in the list tells us to flip from human to robot immediately. This is the worst code I've ever written in my life. 
+    self.who_is_talking_list = [1]
     self.conversation_state = 0
+    self.conversation = conversations[conversation_num]
     rospy.Subscriber('gaze', String, lambda x: self.get_gaze(x))
     rospy.Subscriber('speech', String, lambda x: self.get_speech(x))
     rospy.Subscriber('who_is_talking', String, lambda x: self.get_who_is_talking(x))
@@ -334,7 +346,7 @@ class GazeHMM():
       if who_is_talking_changed:
         self.talker.publish(speech('clear', []))
         if self.who_is_talking == 'robot_speech':
-          cur_convo = conversation[self.conversation_state]
+          cur_convo = self.conversation[self.conversation_state]
           self.talker.publish(speech('talk', cur_convo))
         else:
           self.conversation_state += 1
@@ -362,7 +374,7 @@ if __name__ == '__main__':
     conversation_num = int(sys.argv[1])
     experiment_type = sys.argv[2]
 
-    assert conversation_num in [1,2,3]
+    assert conversation_num in [0,1,2]
     assert experiment_type in ["CONTROL","WOZ","HMM"]
     try:
         hmm = GazeHMM(conversation_num, experiment_type)
