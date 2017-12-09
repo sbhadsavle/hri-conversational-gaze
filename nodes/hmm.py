@@ -348,6 +348,8 @@ class GazeHMM():
         if self.who_is_talking == 'robot_speech':
           cur_convo = self.conversation[self.conversation_state]
           self.talker.publish(speech('talk', cur_convo))
+          if self.cur_state() == 'engaged':
+            self.talker.publish(speech('continue', []))
         else:
           self.conversation_state += 1
 

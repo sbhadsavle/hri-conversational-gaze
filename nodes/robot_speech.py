@@ -85,7 +85,7 @@ class RobotSpeech():
         cmd = self.get_next_cmd()
         print(cmd)
         if cmd.cmd == 'clear':
-          self.speech_stack.append(CLEAR)
+          self.clear()
         if cmd.cmd == 'talk':
           self.speech_stack.extend(cmd.data[::-1])
           self.speech_stack.append(PAUSE)
@@ -101,8 +101,6 @@ class RobotSpeech():
         elif next_speech == PAUSE:
           continue
         elif next_speech == CONTINUE:
-          print '\r'
-          print 'CONTINUE'  
           try:
             idx = self.speech_stack[::-1].index(PAUSE)
             self.speech_stack.pop(len(self.speech_stack) - 1 - idx)
@@ -111,8 +109,6 @@ class RobotSpeech():
           self.speech_stack.pop()
         elif next_speech == INTERRUPT:
           self.speech_stack.pop()
-        elif next_speech == CLEAR:
-          self.clear()
         else:
           self.say(next_speech)
 
