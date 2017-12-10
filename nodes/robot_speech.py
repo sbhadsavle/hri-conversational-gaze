@@ -63,13 +63,20 @@ class RobotSpeech():
       self.talking = False
 
   def interrupt(self, speech):
-    if INTERRUPT in self.speech_stack:
+    if speech in self.speech_stack:
       return
-
-    self.terminate()
-    self.speech_stack.append(PAUSE)
-    self.speech_stack.append(INTERRUPT)
-    self.speech_stack.append("<break time='1000ms' />,"+speech)
+    if INTERRUPT in self.speech_stack:
+      last_interrupt = self.speech_stack.index(INTERRUPT)
+      last_pause = last_interrupt - 1
+      self.speech_stack.remove(PAUSE)
+      self.speech_stack.insert(last_pause, "<break time='1000ms' />,"+speech)
+      self.speech_stack.insert(last_pause, INTERRUPT)
+      self.speech_stack.insert(last_pause, PAUSE)
+    else:
+      self.terminate()
+      self.speech_stack.append(PAUSE)
+      self.speech_stack.append(INTERRUPT)
+      self.speech_stack.append("<break time='1000ms' />,"+speech)
 
   def get_next_cmd(self):
     if not self.cmds:
