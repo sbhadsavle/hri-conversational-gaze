@@ -10,7 +10,7 @@ from geometry_msgs.msg import Twist, Vector3
 
 from conversation_list import conversations
 
-conversations = [
+"""conversations = [
   [
     [
       "Hello, my name is Poli!",
@@ -32,7 +32,7 @@ conversations = [
       "Conversation 3!"
     ],
   ],
-]
+]"""
 
 states = ['engaged', 'not_engaged', 'disinterested', 'thinking']
 
@@ -99,13 +99,13 @@ robot_speech_obs_probs = {
   '@object' : {
     'engaged' : .15,
     'not_engaged' : .2,
-    'disinterested' : .5,
+    'disinterested' : .35,
     'thinking' : .5,
   },
   '@none' : {
     'engaged' : .1,
     'not_engaged' : .6,
-    'disinterested' : .45,
+    'disinterested' : .6,
     'thinking' : .25,
   }
 }
@@ -144,8 +144,8 @@ human_speech_transition_probs = {
 robot_speech_transition_probs = {
   'engaged' : {
     'engaged' : 0.7,
-    'not_engaged' : 0.05,
-    'disinterested' : 0.1,
+    'not_engaged' : 0.02,
+    'disinterested' : 0.13,
     'thinking' : 0.15,
   },
   'not_engaged' : {
@@ -362,6 +362,7 @@ class GazeHMM():
           prev_state = self.beliefs[-2]
           next_state = self.beliefs[-1]
           if self.who_is_talking == 'robot_speech':
+            print("Doing robot talking action!!!!!!")
             self.robot_talking_action(prev_state, next_state)
           else:
             self.human_talking_action(prev_state, next_state)
