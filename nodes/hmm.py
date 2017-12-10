@@ -290,6 +290,7 @@ class GazeHMM():
     if self.experiment_type == 'WOZ':
       return self.woz_state
     if self.experiment_type == 'CONTROL':
+      self.beliefs = ['not_engaged', 'engaged']
       return "engaged"
     return max(self.belief, key=lambda x: self.belief[x])
 
@@ -365,7 +366,7 @@ class GazeHMM():
             print("Doing robot talking action!!!!!!")
             self.robot_talking_action(prev_state, next_state)
           else:
-            self.human_talking_action(prev_state, next_state)
+            self.robot_talking_action(prev_state, next_state)
         
       print '\r'
       print "Belief: " + self.cur_state()
