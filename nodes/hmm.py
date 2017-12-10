@@ -91,20 +91,20 @@ human_speech_obs_probs = {
 # P(gaze = @robot | X = engaged)
 robot_speech_obs_probs = {
   '@robot' : {
-    'engaged' : .75,
-    'not_engaged' : .2,
+    'engaged' : .76,
+    'not_engaged' : .15,
     'disinterested' : .05,
     'thinking' : .25,
   },
   '@object' : {
-    'engaged' : .15,
+    'engaged' : .19,
     'not_engaged' : .2,
     'disinterested' : .35,
     'thinking' : .5,
   },
   '@none' : {
-    'engaged' : .1,
-    'not_engaged' : .6,
+    'engaged' : .05,
+    'not_engaged' : .65,
     'disinterested' : .6,
     'thinking' : .25,
   }
@@ -155,10 +155,10 @@ robot_speech_transition_probs = {
     'thinking' : 0.05,
   },
   'disinterested' : {
-    'engaged' : 0.2,
-    'not_engaged' : 0.3,
-    'disinterested' : 0.4,
-    'thinking' : 0.1,
+    'engaged' : 0.1,
+    'not_engaged' : 0.25,
+    'disinterested' : 0.6,
+    'thinking' : 0.05,
   },
   'thinking' : {
     'engaged' : 0.7,
