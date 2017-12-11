@@ -105,7 +105,11 @@ class RobotSpeech():
         if cmd.cmd == 'interrupt':
           self.interrupt(cmd.data[0])
         if cmd.cmd == 'continue':
-          self.speech_stack.append(CONTINUE)
+          try:
+            while True:
+              self.speech_stack.remove(PAUSE)
+          except:
+            pass
 
       if not self.talking and self.speech_stack:
         next_speech = self.speech_stack[-1]
@@ -113,13 +117,6 @@ class RobotSpeech():
           continue
         elif next_speech == PAUSE:
           continue
-        elif next_speech == CONTINUE:
-          try:
-            idx = self.speech_stack[::-1].index(PAUSE)
-            self.speech_stack.pop(len(self.speech_stack) - 1 - idx)
-          except:
-            pass
-          self.speech_stack.pop()
         elif next_speech == INTERRUPT:
           self.speech_stack.pop()
         else:
