@@ -2,49 +2,49 @@ conversations = [
   [
     # CHEEZ IT
     [
-      "Hello, my name is Paul e, and this is my kitchen.",
-      "I really enjoy asking people about the items in my kitchen.",
-      "Let's go ahead and talking about some of the items now.",
+      "Introduction_1.wav",
+      "Introduction_2.wav",
+      "Introduction_3.wav",
 
-      "I really like Cheez It and I always eat some before going to sleep.",
-      "It's funny that I've never seen a box of Cheez Its before.",
-      "Could you please describe the Cheez It box to me?",
+      "Conversation1_1.wav",
+      "Conversation1_2.wav",
+      "Conversation1_3.wav",
     ],
 
     [
-      "Hmm, I think the box doesn't do justice to Cheez Its.",
-      "Do you have any ideas to make the box more attractive?",
-      "I'm thinking of trying out some Pringles. Could you list 5 similarities between the box of Cheez It and Pringles can.",
+      "Conversation1_4.wav",
+      "Conversation1_5.wav",
+      "Conversation1_6.wav",
     ],
     [
-      "I sometimes confuse Cheez Its with Pringles.",
-      "Can you tell me 5 differences between the box of Cheez It and Pringles can so it doesn't happen again?"
+      "Conversation1_7.wav",
+      "Conversation1_8.wav",
     ],
 
 
     # MUSTARD
     [
-      "Thanks for your help, I really appreciate it.",
-      "Do you like mustard? I love mustard and always put it on my hotdogs.",
-      "I think the mustard bottle is really interesting also.",
-      "What do you think are the 5 most striking things about the bottle of mustard?"
+      "Conversation1_9.wav",
+      "Conversation1_10.wav",
+      "Conversation1_11.wav",
+      "Conversation1_12.wav",
     ],
     [
-      "What are 3 similarities between the mustard bottle and the jam bottle?"
+      "Conversation1_13.wav",
     ],
 
     # BOX
     [
-      "Could you describe the six pictures on the box?"
+      "Conversation1_14.wav",
     ],
     [
-      "Which one is your favorite picture and why?"
+      "Conversation1_15.wav",
     ],
 
     # GOODBYE
     [
-      "Thanks so much for your help today. I really enjoyed talking with you."
-      "Goodbye."
+      "Conversation1_16.wav",
+      "Goodbye.wav"
     ]
   ],
 

@@ -10,30 +10,6 @@ from geometry_msgs.msg import Twist, Vector3
 
 from conversation_list import conversations
 
-conversations = [
-  [
-    [
-      "Hello, my name is Poli!",
-      "I'm here to show you my cool new gaze detection functionality.",
-      "The team that coded me is Asad, Cassidy, Priyanka, and Sarang",
-      "How about that blue pitcher on the table? Seems pretty cool huh?",
-    ],
-    [
-      "This is me talking for the second time!",
-    ]
-  ],
-  [
-    [
-      "Conversation 2!"
-    ],
-  ],
-  [
-    [
-      "Conversation 3!"
-    ],
-  ],
-]
-
 states = ['engaged', 'not_engaged', 'disinterested', 'thinking']
 
 # human_speech_obs_probs['gaze']['@robot']['engaged'] =
@@ -91,21 +67,21 @@ human_speech_obs_probs = {
 # P(gaze = @robot | X = engaged)
 robot_speech_obs_probs = {
   '@robot' : {
-    'engaged' : .75,
-    'not_engaged' : .2,
+    'engaged' : .76,
+    'not_engaged' : .15,
     'disinterested' : .05,
     'thinking' : .25,
   },
   '@object' : {
-    'engaged' : .15,
+    'engaged' : .19,
     'not_engaged' : .2,
-    'disinterested' : .5,
+    'disinterested' : .35,
     'thinking' : .5,
   },
   '@none' : {
-    'engaged' : .1,
-    'not_engaged' : .6,
-    'disinterested' : .45,
+    'engaged' : .05,
+    'not_engaged' : .65,
+    'disinterested' : .6,
     'thinking' : .25,
   }
 }
@@ -144,8 +120,8 @@ human_speech_transition_probs = {
 robot_speech_transition_probs = {
   'engaged' : {
     'engaged' : 0.7,
-    'not_engaged' : 0.05,
-    'disinterested' : 0.1,
+    'not_engaged' : 0.02,
+    'disinterested' : 0.13,
     'thinking' : 0.15,
   },
   'not_engaged' : {
@@ -155,10 +131,10 @@ robot_speech_transition_probs = {
     'thinking' : 0.05,
   },
   'disinterested' : {
-    'engaged' : 0.2,
-    'not_engaged' : 0.3,
-    'disinterested' : 0.4,
-    'thinking' : 0.1,
+    'engaged' : 0.1,
+    'not_engaged' : 0.25,
+    'disinterested' : 0.6,
+    'thinking' : 0.05,
   },
   'thinking' : {
     'engaged' : 0.7,
@@ -362,9 +338,10 @@ class GazeHMM():
           prev_state = self.beliefs[-2]
           next_state = self.beliefs[-1]
           if self.who_is_talking == 'robot_speech':
+            print("Doing robot talking action!!!!!!")
             self.robot_talking_action(prev_state, next_state)
           else:
-            self.human_talking_action(prev_state, next_state)
+            self.robot_talking_action(prev_state, next_state)
         
       print '\r'
       print "Belief: " + self.cur_state()
