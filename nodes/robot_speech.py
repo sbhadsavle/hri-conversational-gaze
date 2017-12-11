@@ -6,6 +6,10 @@ import subprocess
 from std_msgs.msg import String
 from gaze_turtle.msg import speech
 
+import os, rospkg
+rp = rospkg.RosPack()
+data_path = os.path.realpath(os.path.join(rp.get_path("gaze_turtle"), "data"))
+
 IDLE = 0
 PAUSE = 1
 CONTINUE = 2
@@ -51,7 +55,8 @@ class RobotSpeech():
         self.broadcast.publish('SPEECH_DONE')
 
     self.talking = True
-    cmd = ['espeak', '-s', '140', '-m', speech]
+    wav_file = os.path.join(data_path, speech)
+    cmd = ['aplay', wav_file]
     self.t = threading.Thread(target=self.run_and_wait, args=(cmd, done_talking))
     self.t.start()
 
@@ -69,14 +74,14 @@ class RobotSpeech():
       last_interrupt = self.speech_stack.index(INTERRUPT)
       last_pause = last_interrupt - 1
       self.speech_stack.remove(PAUSE)
-      self.speech_stack.insert(last_pause, "<break time='1000ms' />,"+speech)
+      self.speech_stack.insert(last_pause, speech)
       self.speech_stack.insert(last_pause, INTERRUPT)
       self.speech_stack.insert(last_pause, PAUSE)
     else:
       self.terminate()
       self.speech_stack.append(PAUSE)
       self.speech_stack.append(INTERRUPT)
-      self.speech_stack.append("<break time='1000ms' />,"+speech)
+      self.speech_stack.append(speech)
 
   def get_next_cmd(self):
     if not self.cmds:
@@ -95,7 +100,7 @@ class RobotSpeech():
           self.clear()
         if cmd.cmd == 'talk':
           for speech in cmd.data[::-1]:
-            self.speech_stack.append(speech+"<break time='1000ms' />,")
+            self.speech_stack.append(speech)
           self.speech_stack.append(PAUSE)
         if cmd.cmd == 'interrupt':
           self.interrupt(cmd.data[0])

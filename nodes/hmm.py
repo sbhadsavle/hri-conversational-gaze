@@ -10,30 +10,6 @@ from geometry_msgs.msg import Twist, Vector3
 
 from conversation_list import conversations
 
-"""conversations = [
-  [
-    [
-      "Hello, my name is Poli!",
-      "I'm here to show you my cool new gaze detection functionality.",
-      "The team that coded me is Asad, Cassidy, Priyanka, and Sarang",
-      "How about that blue pitcher on the table? Seems pretty cool huh?",
-    ],
-    [
-      "This is me talking for the second time!",
-    ]
-  ],
-  [
-    [
-      "Conversation 2!"
-    ],
-  ],
-  [
-    [
-      "Conversation 3!"
-    ],
-  ],
-]"""
-
 states = ['engaged', 'not_engaged', 'disinterested', 'thinking']
 
 # human_speech_obs_probs['gaze']['@robot']['engaged'] =
