@@ -30,6 +30,8 @@ class RobotSpeech():
     rospy.Subscriber('speech_cmd', speech, lambda x: self.get_cmd(x))
     self.broadcast = rospy.Publisher('averting', String, queue_size=20)
 
+    self.aversion_list = ['Introduction_2.wav', 'Conversation1_4.wav', 'Conversation1_7.wav', 'Conversation1_11.wav']
+    self.other_aversion_list = ['Disinterested.wav']
     self.cmds = []
     self.speech_stack = [IDLE]
     self.interrupting = None
@@ -116,8 +118,11 @@ class RobotSpeech():
         next_speech = self.speech_stack[-1]
         if next_speech in self.aversion_list:
           self.broadcast.publish('averting')
+        elif next_speech in self.other_aversion_list:
+          self.broadcast.publish('other_averting')
         else:
           self.broadcast.publish('normal')
+        
 
         if next_speech == IDLE:
           continue

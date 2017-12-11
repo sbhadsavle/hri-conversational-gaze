@@ -5,7 +5,7 @@ import itertools
 import rospy
 import random
 from gaze_turtle.msg import speech
-from std_msgs.msg import String
+from std_msgs.msg import Float64, String
 from geometry_msgs.msg import Twist, Vector3
 
 from conversation_list import conversations
@@ -230,11 +230,14 @@ class GazeHMM():
     self.who_is_talking_list.append(who_is_talking.data)
 
   def get_averting(self, averting):
+    averting = averting.data
     if self.averting_state != averting:
       self.averting_state = averting
       if self.averting_state == 'averting':
         self.pan.publish(0.3)
         self.tilt.publish(0.4)
+      elif self.averting_state == 'other_averting':
+        self.pan.publish(-0.1)
       else:
         self.pan.publish(0.0)
         self.tilt.publish(0.3)
