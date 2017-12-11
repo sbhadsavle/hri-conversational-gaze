@@ -74,14 +74,14 @@ robot_speech_obs_probs = {
   },
   '@object' : {
     'engaged' : .19,
-    'not_engaged' : .2,
-    'disinterested' : .35,
+    'not_engaged' : .25,
+    'disinterested' : .3,
     'thinking' : .5,
   },
   '@none' : {
     'engaged' : .05,
-    'not_engaged' : .65,
-    'disinterested' : .6,
+    'not_engaged' : .6,
+    'disinterested' : .65,
     'thinking' : .25,
   }
 }
@@ -132,8 +132,8 @@ robot_speech_transition_probs = {
   },
   'disinterested' : {
     'engaged' : 0.1,
-    'not_engaged' : 0.25,
-    'disinterested' : 0.6,
+    'not_engaged' : 0.285,
+    'disinterested' : 0.565,
     'thinking' : 0.05,
   },
   'thinking' : {
