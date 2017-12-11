@@ -28,7 +28,7 @@ class RobotSpeech():
 
   def __init__(self):
     rospy.Subscriber('speech_cmd', speech, lambda x: self.get_cmd(x))
-    self.broadcast = rospy.Publisher('speech_status', String, queue_size=20)
+    self.broadcast = rospy.Publisher('averting', String, queue_size=20)
 
     self.cmds = []
     self.speech_stack = [IDLE]
@@ -47,12 +47,13 @@ class RobotSpeech():
  
   def say(self, speech):
     print('Saying: %s', speech)
+
     def done_talking():
       self.speech_stack.pop()
       self.talking = False
       self.cur_speech = None
       if not self.speech_stack:
-        self.broadcast.publish('SPEECH_DONE')
+        self.broadcast.publish('DONE')
 
     self.talking = True
     wav_file = os.path.join(data_path, speech)
@@ -113,6 +114,11 @@ class RobotSpeech():
 
       if not self.talking and self.speech_stack:
         next_speech = self.speech_stack[-1]
+        if next_speech in self.aversion_list:
+          self.broadcast.publish('averting')
+        else:
+          self.broadcast.publish('normal')
+
         if next_speech == IDLE:
           continue
         elif next_speech == PAUSE:

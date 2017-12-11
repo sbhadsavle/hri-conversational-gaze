@@ -199,14 +199,21 @@ class GazeHMM():
     self.who_is_talking_list = [1]
     self.conversation_state = 0
     self.conversation = conversations[conversation_num]
+    self.averting_phrases = ["Introduction2.wav"]
     rospy.Subscriber('gaze', String, lambda x: self.get_gaze(x))
     rospy.Subscriber('speech', String, lambda x: self.get_speech(x))
     rospy.Subscriber('who_is_talking', String, lambda x: self.get_who_is_talking(x))
+    rospy.Subscriber('averting', String, lambda x: self.get_averting(x))
+
+    self.pan = rospy.Publisher('/pan_controller/command', Float64, queue_size=20)
+    self.tilt = rospy.Publisher('/tilt_controller/command', Float64, queue_size=20)
 
     self.gazes = ['@none']
     self.speeches = ['none']
     self.talking = False
     self.beliefs = []
+
+    self.averting_state = 'normal'
 
     # Woz state!
     self.woz_state = 'not_engaged'
@@ -221,6 +228,16 @@ class GazeHMM():
 
   def get_who_is_talking(self, who_is_talking):
     self.who_is_talking_list.append(who_is_talking.data)
+
+  def get_averting(self, averting):
+    if self.averting_state != averting:
+      self.averting_state = averting
+      if self.averting_state == 'averting':
+        self.pan.publish(0.3)
+        self.tilt.publish(0.4)
+      else:
+        self.pan.publish(0.0)
+        self.tilt.publish(0.3)
 
   def get_woz(self, woz):
     self.woz_state = woz.data
