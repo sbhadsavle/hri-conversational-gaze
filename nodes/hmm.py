@@ -289,12 +289,12 @@ class GazeHMM():
   def robot_talking_action(self, prev_state, new_state):
     if new_state == 'disinterested':
       if prev_state != 'not_engaged':
-        self.talker.publish(speech('interrupt', ["Hey are you still interested?"]))
+        self.talker.publish(speech('interrupt', ["Disinterested.wav"]))
     if new_state == 'engaged':
       if prev_state != 'thinking':
         self.talker.publish(speech('continue', []))
     if new_state == 'not_engaged':
-      self.talker.publish(speech('interrupt', ["Oh I understand...goodbye."]))
+      self.talker.publish(speech('interrupt', ["NotEngaged.wav"]))
 
   def run(self):
     rospy.init_node('GazeHMM', anonymous=True)
