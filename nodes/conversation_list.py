@@ -14,7 +14,7 @@ conversations = [
     [
       "Conversation1_4.wav",
       "Conversation1_5.wav",
-      "Conversation1_6.wav",
+      # We removed this one, didn't make much sense
     ],
     [
       "Conversation1_7.wav",
@@ -99,30 +99,38 @@ conversations = [
   [
     # PITCHER
     [
-      "Hello, my name is Paul e, and this is my kitchen.",
-      "I really enjoy asking people about the items in my kitchen.",
-      "Let's go ahead and talking about some of the items now.",
+      "Introduction_1.wav",
+      "Introduction_2.wav",
+      "Introduction_3.wav",
 
-      "Can you describe the pitcher to me? What do you normally use it for?"
+      "Conversation3_1.wav",
     ],
     [
-      "I remember when I was young, my robot mom used to serve lemonade in it.",
-      "Can you tell me how to make lemonade?"
+      "Conversation3_2.wav",
+      "Conversation3_3.wav",
     ],
 
     # TOASTEDS
     [
-      "The box of toasteds has a sesame spinach spread recipe written on the back of it.",
-      "Can you tell me the directions of that recipe?",
+      "Conversation3_4.wav",
+      "Conversation3_5.wav",
     ],
     [
-      "I always get the box of toasteds confused with the box of Cheez Its!",
-      "Can you tell me 5 differences and 5 similarities between the two boxes?"
+      "Conversation3_6.wav",
+      "Conversation3_7.wav",
     ],
 
     [
-      "I use the wooden box to store my robot grandma's recipes. However, I think the box can be put to better use. What else do you think I can store in this wooden box?",
-      "I bought the box when I went to visit my robot grandma in California. Can you tell me a little bit about a trip you took recently?"
+      "Conversation3_8.wav",
+      "Conversation3_9.wav",
+    ],
+    [
+      "Conversation3_10.wav",
+      "Conversation3_11.wav",
+    ],
+    [
+      "Conversation3_12.wav",
+      "Goodbye.wav"
     ]
   ],
 ]
