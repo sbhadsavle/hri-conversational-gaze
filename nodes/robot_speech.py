@@ -17,7 +17,7 @@ class RobotSpeech():
 
   def run_and_wait(self, cmd, callback):
     lock.acquire()
-    self.speech_cur = cur = subprocess.Popen(cmd)
+    cur = self.cur_speech = subprocess.Popen(cmd)
     lock.release()
     ret = cur.wait()
 
@@ -42,6 +42,7 @@ class RobotSpeech():
     self.talking = False
     self.cur_speech = None
     self.got_continue = False
+    self.residual = None
 
   def get_cmd(self, cmd):
     lock.acquire()
@@ -59,12 +60,12 @@ class RobotSpeech():
         self.got_continue = True
     if cmd.cmd == 'start_human':
       self.talk_list = []
+      self.residual = None
       self.speech_state = "TALKING"
     lock.release()
  
   # LOCKED
-  def say(self, speech, is_interrupt):
-
+  def say(self, speech):
     self.talking = True
     if self.firstTimeTalking:
       self.firstTimeTalking = False
@@ -82,10 +83,6 @@ class RobotSpeech():
 
     # LOCKED
     def done_talking():
-      if is_interrupt:
-        self.interrupt_list.pop(0)
-      else:
-        self.talk_list.pop(0)
       self.talking = False
       self.cur_speech = None
 
@@ -97,22 +94,29 @@ class RobotSpeech():
   # LOCKED
   def terminate(self):
     if self.cur_speech:
-      self.cur_speech.terminate()
+      self.cur_speech.kill()
       self.cur_speech = None
       self.talking = False
     
   # LOCKED
   def talking_state(self):
     if self.talk_list:
-      self.say(self.talk_list[0], False)
+      self.residual = next_speech = self.talk_list.pop(0)
+      self.say(next_speech)
     
   # LOCKED
   def interrupt_state(self):
     if self.interrupt_list:
-      self.say(self.interrupt_list[0], True)
+      next_speech = self.interrupt_list.pop(0)
+      self.say(next_speech)
     elif self.got_continue:
       self.got_continue = False
       self.speech_state = "TALKING"
+
+      # If interrupted, play the last thing we said in TALKING state
+      if self.residual:
+        self.talk_list.insert(0, self.residual)
+        self.residual
     
 
   def run(self):
@@ -126,7 +130,7 @@ class RobotSpeech():
         elif self.speech_state == "INTERRUPT":
           self.interrupt_state()
       lock.release()
-  #    rate.sleep()
+      rate.sleep()
 
 if __name__ == '__main__':
   try:
