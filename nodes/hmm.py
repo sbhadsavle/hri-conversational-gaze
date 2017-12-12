@@ -5,8 +5,9 @@ import itertools
 import rospy
 import random
 from gaze_turtle.msg import speech
-from std_msgs.msg import String
+from std_msgs.msg import Float64, String
 from geometry_msgs.msg import Twist, Vector3
+from hlpr_speech_msgs.msg import StampedString 
 
 from conversation_list import conversations
 
@@ -74,14 +75,14 @@ robot_speech_obs_probs = {
   },
   '@object' : {
     'engaged' : .19,
-    'not_engaged' : .2,
-    'disinterested' : .35,
+    'not_engaged' : .25,
+    'disinterested' : .3,
     'thinking' : .5,
   },
   '@none' : {
     'engaged' : .05,
-    'not_engaged' : .65,
-    'disinterested' : .6,
+    'not_engaged' : .6,
+    'disinterested' : .65,
     'thinking' : .25,
   }
 }
@@ -132,8 +133,8 @@ robot_speech_transition_probs = {
   },
   'disinterested' : {
     'engaged' : 0.1,
-    'not_engaged' : 0.25,
-    'disinterested' : 0.6,
+    'not_engaged' : 0.285,
+    'disinterested' : 0.565,
     'thinking' : 0.05,
   },
   'thinking' : {
@@ -199,14 +200,22 @@ class GazeHMM():
     self.who_is_talking_list = [1]
     self.conversation_state = 0
     self.conversation = conversations[conversation_num]
+    self.averting_phrases = ["Introduction2.wav"]
     rospy.Subscriber('gaze', String, lambda x: self.get_gaze(x))
     rospy.Subscriber('speech', String, lambda x: self.get_speech(x))
     rospy.Subscriber('who_is_talking', String, lambda x: self.get_who_is_talking(x))
+    rospy.Subscriber('averting', String, lambda x: self.get_averting(x))
+
+    self.pan = rospy.Publisher('/pan_controller/command', Float64, queue_size=20)
+    self.tilt = rospy.Publisher('/tilt_controller/command', Float64, queue_size=20)
+    self.logPub = rospy.Publisher('log', StampedString, queue_size=20)
 
     self.gazes = ['@none']
     self.speeches = ['none']
     self.talking = False
     self.beliefs = []
+
+    self.averting_state = 'normal'
 
     # Woz state!
     self.woz_state = 'not_engaged'
@@ -221,6 +230,19 @@ class GazeHMM():
 
   def get_who_is_talking(self, who_is_talking):
     self.who_is_talking_list.append(who_is_talking.data)
+
+  def get_averting(self, averting):
+    averting = averting.data
+    if self.averting_state != averting:
+      self.averting_state = averting
+      if self.averting_state == 'averting':
+        self.pan.publish(0.3)
+        self.tilt.publish(0.4)
+      elif self.averting_state == 'other_averting':
+        self.pan.publish(-0.1)
+      else:
+        self.pan.publish(0.0)
+        self.tilt.publish(0.3)
 
   def get_woz(self, woz):
     self.woz_state = woz.data
@@ -291,7 +313,6 @@ class GazeHMM():
       if prev_state != 'not_engaged':
         self.talker.publish(speech('interrupt', ["Disinterested.wav"]))
     if new_state == 'engaged':
-      if prev_state != 'thinking':
         self.talker.publish(speech('continue', []))
     if new_state == 'not_engaged':
       self.talker.publish(speech('interrupt', ["NotEngaged.wav"]))
@@ -324,13 +345,14 @@ class GazeHMM():
         self.beliefs.append(self.cur_state())
 
       if who_is_talking_changed:
-        self.talker.publish(speech('clear', []))
         if self.who_is_talking == 'robot_speech':
           cur_convo = self.conversation[self.conversation_state]
-          self.talker.publish(speech('talk', cur_convo))
+          self.talker.publish(speech('start_robot', cur_convo))
+          self.talker.publish(speech('interrupt', cur_convo))
           if self.cur_state() == 'engaged':
             self.talker.publish(speech('continue', []))
         else:
+          self.talker.publish(speech('start_human', []))
           self.conversation_state += 1
 
       if len(self.beliefs) > 1:
@@ -347,6 +369,10 @@ class GazeHMM():
       print "Belief: " + self.cur_state()
       print '\r'
       print self.belief
+      beliefMsg = StampedString()
+      beliefMsg.keyphrase = str(self.cur_state())
+      beliefMsg.stamp = rospy.get_rostime()
+      self.logPub.publish(beliefMsg)
       rate.sleep()
 
 

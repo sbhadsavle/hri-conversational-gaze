@@ -1,6 +1,7 @@
   <launch>
     <arg name="convo" />
     <arg name="exp" />
+    <arg name="user" />
 
     <!-- Turtlesim Node-->
     <node pkg="turtlesim" type="turtlesim_node" name="sim"/>
@@ -20,5 +21,8 @@
           name="hmm" args="$(arg convo) $(arg exp)" output="screen"/>
     <node pkg="gaze_turtle" type="robot_speech.py" 
           name="robot_speech" output="screen"/>
+    <node pkg="gaze_turtle" type="logger.py" 
+          name="poli_logger" args="$(arg user) $(arg exp)" output="screen"/>
+   
  </launch>
 
