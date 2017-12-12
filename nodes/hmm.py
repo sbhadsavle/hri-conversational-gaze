@@ -313,7 +313,6 @@ class GazeHMM():
       if prev_state != 'not_engaged':
         self.talker.publish(speech('interrupt', ["Disinterested.wav"]))
     if new_state == 'engaged':
-      if prev_state != 'thinking':
         self.talker.publish(speech('continue', []))
     if new_state == 'not_engaged':
       self.talker.publish(speech('interrupt', ["NotEngaged.wav"]))
@@ -346,13 +345,14 @@ class GazeHMM():
         self.beliefs.append(self.cur_state())
 
       if who_is_talking_changed:
-        self.talker.publish(speech('clear', []))
         if self.who_is_talking == 'robot_speech':
           cur_convo = self.conversation[self.conversation_state]
-          self.talker.publish(speech('talk', cur_convo))
+          self.talker.publish(speech('start_robot', cur_convo))
+          self.talker.publish(speech('interrupt', cur_convo))
           if self.cur_state() == 'engaged':
             self.talker.publish(speech('continue', []))
         else:
+          self.talker.publish(speech('start_human', []))
           self.conversation_state += 1
 
       if len(self.beliefs) > 1:
