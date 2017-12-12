@@ -200,7 +200,6 @@ class GazeHMM():
     self.who_is_talking_list = [1]
     self.conversation_state = 0
     self.conversation = conversations[conversation_num]
-    self.averting_phrases = ["Introduction2.wav"]
     rospy.Subscriber('gaze', String, lambda x: self.get_gaze(x))
     rospy.Subscriber('speech', String, lambda x: self.get_speech(x))
     rospy.Subscriber('who_is_talking', String, lambda x: self.get_who_is_talking(x))
@@ -348,7 +347,6 @@ class GazeHMM():
         if self.who_is_talking == 'robot_speech':
           cur_convo = self.conversation[self.conversation_state]
           self.talker.publish(speech('start_robot', cur_convo))
-          self.talker.publish(speech('interrupt', cur_convo))
           if self.cur_state() == 'engaged':
             self.talker.publish(speech('continue', []))
         else:

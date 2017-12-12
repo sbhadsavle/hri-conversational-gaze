@@ -11,9 +11,6 @@ import os, rospkg
 rp = rospkg.RosPack()
 data_path = os.path.realpath(os.path.join(rp.get_path("gaze_turtle"), "data"))
 
-TALKING = 1
-INTERRUPT = 2
-
 class RobotSpeech():
 
   def run_and_wait(self, cmd, callback):
@@ -37,33 +34,35 @@ class RobotSpeech():
 
     self.interrupt_list = []
     self.talk_list = []
-    self.speech_state = TALKING
+    self.speech_state = "TALKING"
     self.talking = False
     self.cur_speech = None
+    self.got_continue = False
     self.lock = threading.Lock()
 
   def get_cmd(self, cmd):
     with self.lock:
       if cmd.cmd == 'start_robot':
         self.talk_list = cmd.data
-        self.speech_state = TALKING
+        self.speech_state = "INTERRUPT"
         self.terminate()
       if cmd.cmd == 'interrupt':
         self.interrupt_list.extend(cmd.data)
-        if self.speech_state != INTERRUPT:
-          self.speech_state = INTERRUPT
+        if self.speech_state != "INTERRUPT":
+          self.speech_state = "INTERRUPT"
           self.terminate()
-      if cmd.cmd == 'continue'
-        if self.speech_state == INTERRUPT:
+      if cmd.cmd == 'continue':
+        if self.speech_state == "INTERRUPT":
           self.got_continue = True
       if cmd.cmd == 'start_human':
         self.talk_list = []
-        self.speech_state = TALKING
+        self.speech_state = "TALKING"
  
   # LOCKED
   def say(self, speech, is_interrupt):
     print('Saying: %s', speech)
 
+    self.talking = True
     if self.firstTimeTalking:
       self.firstTimeTalking = False
       firstMsg = StampedString()
@@ -71,9 +70,9 @@ class RobotSpeech():
       firstMsg.stamp = rospy.get_rostime()
       self.logPub.publish(firstMsg)
 
-    if next_speech in self.aversion_list:
+    if speech in self.aversion_list:
       self.broadcast.publish('averting')
-    elif next_speech in self.other_aversion_list:
+    elif speech in self.other_aversion_list:
       self.broadcast.publish('other_averting')
     else:
       self.broadcast.publish('normal')
@@ -84,6 +83,7 @@ class RobotSpeech():
         self.interrupt_list.pop(0)
       else:
         self.talk_list.pop(0)
+      self.talking = False
       self.cur_speech = None
 
     wav_file = os.path.join(data_path, speech)
@@ -96,13 +96,12 @@ class RobotSpeech():
     if self.cur_speech:
       self.cur_speech.terminate()
       self.cur_speech = None
+      self.talking = False
     
   # LOCKED
   def talking_state(self):
     if self.talk_list:
       self.say(self.talk_list[0], False)
-    else:
-      pass
     
   # LOCKED
   def interrupt_state(self):
@@ -110,7 +109,7 @@ class RobotSpeech():
       self.say(self.interrupt_list[0], True)
     elif self.got_continue:
       self.got_continue = False
-      self.speech_state = TALKING
+      self.speech_state = "TALKING"
     
 
   def run(self):
@@ -118,10 +117,10 @@ class RobotSpeech():
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
       with self.lock:
-        if not self.cur_speech:
-          elif self.speech_state = TALKING:
+        if not self.talking:
+          if self.speech_state == "TALKING":
             self.talking_state()
-          elif self.speech_state = INTERRUPT:
+          elif self.speech_state == "INTERRUPT":
             self.interrupt_state()
 
 if __name__ == '__main__':
