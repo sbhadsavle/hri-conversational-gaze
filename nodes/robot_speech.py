@@ -5,6 +5,7 @@ import threading
 import subprocess
 from std_msgs.msg import String
 from gaze_turtle.msg import speech
+from hlpr_speech_msgs.msg import StampedString
 
 import os, rospkg
 rp = rospkg.RosPack()
@@ -29,6 +30,8 @@ class RobotSpeech():
   def __init__(self):
     rospy.Subscriber('speech_cmd', speech, lambda x: self.get_cmd(x))
     self.broadcast = rospy.Publisher('averting', String, queue_size=20)
+    self.logPub = rospy.Publisher('log', StampedString, queue_size=20)
+    self.firstTimeTalking = True
 
     self.aversion_list = ['Introduction_2.wav', 'Conversation1_4.wav', 'Conversation1_7.wav', 'Conversation1_11.wav']
     self.other_aversion_list = ['Disinterested.wav']
@@ -49,7 +52,12 @@ class RobotSpeech():
  
   def say(self, speech):
     print('Saying: %s', speech)
-
+    if self.firstTimeTalking:
+      self.firstTimeTalking = False
+      firstMsg = StampedString()
+      firstMsg.keyphrase = str("START")
+      firstMsg.stamp = rospy.get_rostime()
+      self.logPub.publish(firstMsg)
     def done_talking():
       self.speech_stack.pop()
       self.talking = False

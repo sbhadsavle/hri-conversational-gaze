@@ -7,6 +7,7 @@ import random
 from gaze_turtle.msg import speech
 from std_msgs.msg import Float64, String
 from geometry_msgs.msg import Twist, Vector3
+from hlpr_speech_msgs.msg import StampedString 
 
 from conversation_list import conversations
 
@@ -207,6 +208,7 @@ class GazeHMM():
 
     self.pan = rospy.Publisher('/pan_controller/command', Float64, queue_size=20)
     self.tilt = rospy.Publisher('/tilt_controller/command', Float64, queue_size=20)
+    self.logPub = rospy.Publisher('log', StampedString, queue_size=20)
 
     self.gazes = ['@none']
     self.speeches = ['none']
@@ -367,6 +369,10 @@ class GazeHMM():
       print "Belief: " + self.cur_state()
       print '\r'
       print self.belief
+      beliefMsg = StampedString()
+      beliefMsg.keyphrase = str(self.cur_state())
+      beliefMsg.stamp = rospy.get_rostime()
+      self.logPub.publish(beliefMsg)
       rate.sleep()
 
 
