@@ -205,6 +205,8 @@ class GazeHMM():
     rospy.Subscriber('who_is_talking', String, lambda x: self.get_who_is_talking(x))
     rospy.Subscriber('averting', String, lambda x: self.get_averting(x))
 
+    self.talker = rospy.Publisher('speech_cmd', speech, queue_size=20)
+
     self.pan = rospy.Publisher('/pan_controller/command', Float64, queue_size=20)
     self.tilt = rospy.Publisher('/tilt_controller/command', Float64, queue_size=20)
     self.logPub = rospy.Publisher('log', StampedString, queue_size=20)
@@ -224,7 +226,7 @@ class GazeHMM():
     self.gazes.append(gaze_o.data)
 
   def get_speech(self, speech_o):
-    print speech_o
+    #print speech_o
     self.speeches.append(speech_o.data)
 
   def get_who_is_talking(self, who_is_talking):
@@ -318,7 +320,6 @@ class GazeHMM():
 
   def run(self):
     rospy.init_node('GazeHMM', anonymous=True)
-    self.talker = rospy.Publisher('speech_cmd', speech, queue_size=20)
     # Hack to wait for speech_cmd to come online
     while self.talker.get_num_connections() == 0:
       pass
@@ -347,7 +348,7 @@ class GazeHMM():
         if self.who_is_talking == 'robot_speech':
           cur_convo = self.conversation[self.conversation_state]
           self.talker.publish(speech('start_robot', cur_convo))
-          if self.cur_state() == 'engaged':
+          if self.beliefs[-1] == 'engaged':
             self.talker.publish(speech('continue', []))
         else:
           self.talker.publish(speech('start_human', []))
@@ -363,10 +364,10 @@ class GazeHMM():
           else:
             self.robot_talking_action(prev_state, next_state)
         
-      print '\r'
-      print "Belief: " + self.cur_state()
-      print '\r'
-      print self.belief
+      #print '\r'
+      #print "Belief: " + self.cur_state()
+      #print '\r'
+      #print self.belief
       beliefMsg = StampedString()
       beliefMsg.keyphrase = str(self.cur_state())
       beliefMsg.stamp = rospy.get_rostime()

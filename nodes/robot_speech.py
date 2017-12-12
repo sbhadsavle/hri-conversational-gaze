@@ -11,16 +11,20 @@ import os, rospkg
 rp = rospkg.RosPack()
 data_path = os.path.realpath(os.path.join(rp.get_path("gaze_turtle"), "data"))
 
+lock = threading.Lock()
+
 class RobotSpeech():
 
   def run_and_wait(self, cmd, callback):
-    with self.lock:
-      self.cur_speech = cur = subprocess.Popen(cmd)
+    lock.acquire()
+    self.speech_cur = cur = subprocess.Popen(cmd)
+    lock.release()
     ret = cur.wait()
 
     print("Done with: ", cmd, " ", ret)
-    with self.lock:
-      callback()
+    lock.acquire()
+    callback()
+    lock.release()
 
 
   def __init__(self):
@@ -38,29 +42,28 @@ class RobotSpeech():
     self.talking = False
     self.cur_speech = None
     self.got_continue = False
-    self.lock = threading.Lock()
 
   def get_cmd(self, cmd):
-    with self.lock:
-      if cmd.cmd == 'start_robot':
-        self.talk_list = cmd.data
+    lock.acquire()
+    if cmd.cmd == 'start_robot':
+      self.talk_list = cmd.data
+      self.speech_state = "INTERRUPT"
+      self.terminate()
+    if cmd.cmd == 'interrupt':
+      self.interrupt_list.extend(cmd.data)
+      if self.speech_state != "INTERRUPT":
         self.speech_state = "INTERRUPT"
         self.terminate()
-      if cmd.cmd == 'interrupt':
-        self.interrupt_list.extend(cmd.data)
-        if self.speech_state != "INTERRUPT":
-          self.speech_state = "INTERRUPT"
-          self.terminate()
-      if cmd.cmd == 'continue':
-        if self.speech_state == "INTERRUPT":
-          self.got_continue = True
-      if cmd.cmd == 'start_human':
-        self.talk_list = []
-        self.speech_state = "TALKING"
+    if cmd.cmd == 'continue':
+      if self.speech_state == "INTERRUPT":
+        self.got_continue = True
+    if cmd.cmd == 'start_human':
+      self.talk_list = []
+      self.speech_state = "TALKING"
+    lock.release()
  
   # LOCKED
   def say(self, speech, is_interrupt):
-    print('Saying: %s', speech)
 
     self.talking = True
     if self.firstTimeTalking:
@@ -116,12 +119,14 @@ class RobotSpeech():
     rospy.init_node('RobotSpeech')
     rate = rospy.Rate(10)
     while not rospy.is_shutdown():
-      with self.lock:
-        if not self.talking:
-          if self.speech_state == "TALKING":
-            self.talking_state()
-          elif self.speech_state == "INTERRUPT":
-            self.interrupt_state()
+      lock.acquire()
+      if not self.talking:
+        if self.speech_state == "TALKING":
+          self.talking_state()
+        elif self.speech_state == "INTERRUPT":
+          self.interrupt_state()
+      lock.release()
+  #    rate.sleep()
 
 if __name__ == '__main__':
   try:
