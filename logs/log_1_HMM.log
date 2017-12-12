@@ -1,0 +1,27 @@
+stamp: 
+  secs: 1513104488
+  nsecs: 337212085
+keyphrase: not_engaged
+
+stamp: 
+  secs: 1513104491
+  nsecs: 337362051
+keyphrase: engaged
+
+stamp: 
+  secs: 1513104491
+  nsecs: 516755104
+keyphrase: START
+Seconds since start: 0
+
+stamp: 
+  secs: 1513104492
+  nsecs: 338161945
+keyphrase: engaged
+Seconds since start: 1
+
+stamp: 
+  secs: 1513105391
+  nsecs: 340836048
+keyphrase: not_engaged
+

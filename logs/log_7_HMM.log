@@ -1,0 +1,122 @@
+stamp: 
+  secs: 1513120550
+  nsecs: 605082988
+keyphrase: not_engaged
+
+stamp: 
+  secs: 1513120551
+  nsecs: 605022907
+keyphrase: engaged
+
+stamp: 
+  secs: 1513120551
+  nsecs: 739156961
+keyphrase: START
+Seconds since start: 0
+
+stamp: 
+  secs: 1513120552
+  nsecs: 605179071
+keyphrase: engaged
+Seconds since start: 1
+
+stamp: 
+  secs: 1513120707
+  nsecs:  45747995
+keyphrase: not_engaged
+
+stamp: 
+  secs: 1513120710
+  nsecs:  46637058
+keyphrase: engaged
+
+stamp: 
+  secs: 1513120710
+  nsecs: 165579080
+keyphrase: START
+Seconds since start: 0
+
+stamp: 
+  secs: 1513120711
+  nsecs:  46597003
+keyphrase: engaged
+Seconds since start: 1
+
+stamp: 
+  secs: 1513120725
+  nsecs:  46767950
+keyphrase: disinterested
+Seconds since start: 15
+
+stamp: 
+  secs: 1513120734
+  nsecs:  46704053
+keyphrase: not_engaged
+Seconds since start: 24
+
+stamp: 
+  secs: 1513120766
+  nsecs:  46602010
+keyphrase: engaged
+Seconds since start: 56
+
+stamp: 
+  secs: 1513120793
+  nsecs:  46572923
+keyphrase: thinking
+Seconds since start: 83
+
+stamp: 
+  secs: 1513120796
+  nsecs:  46267032
+keyphrase: engaged
+Seconds since start: 86
+
+stamp: 
+  secs: 1513120832
+  nsecs:  46197891
+keyphrase: thinking
+Seconds since start: 122
+
+stamp: 
+  secs: 1513120834
+  nsecs:  46745061
+keyphrase: engaged
+Seconds since start: 124
+
+stamp: 
+  secs: 1513120846
+  nsecs:  46561956
+keyphrase: thinking
+Seconds since start: 136
+
+stamp: 
+  secs: 1513120847
+  nsecs:  45909881
+keyphrase: engaged
+Seconds since start: 137
+
+stamp: 
+  secs: 1513120866
+  nsecs:  46750068
+keyphrase: disinterested
+Seconds since start: 156
+
+stamp: 
+  secs: 1513120870
+  nsecs:  46087026
+keyphrase: engaged
+Seconds since start: 160
+
+stamp: 
+  secs: 1513120948
+  nsecs:  46555995
+keyphrase: thinking
+Seconds since start: 238
+
+stamp: 
+  secs: 1513120950
+  nsecs:  46623945
+keyphrase: engaged
+Seconds since start: 240
+

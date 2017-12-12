@@ -1,0 +1,115 @@
+stamp: 
+  secs: 1513105401
+  nsecs:  18769025
+keyphrase: not_engaged
+
+stamp: 
+  secs: 1513105493
+  nsecs: 996073007
+keyphrase: not_engaged
+
+stamp: 
+  secs: 1513105625
+  nsecs: 436357975
+keyphrase: not_engaged
+
+stamp: 
+  secs: 1513107024
+  nsecs: 113976001
+keyphrase: not_engaged
+
+stamp: 
+  secs: 1513107026
+  nsecs: 114931106
+keyphrase: engaged
+
+stamp: 
+  secs: 1513107026
+  nsecs: 269038915
+keyphrase: START
+Seconds since start: 0
+
+stamp: 
+  secs: 1513107027
+  nsecs: 114536046
+keyphrase: engaged
+Seconds since start: 1
+
+stamp: 
+  secs: 1513107042
+  nsecs: 114327907
+keyphrase: disinterested
+Seconds since start: 16
+
+stamp: 
+  secs: 1513107046
+  nsecs: 114264011
+keyphrase: engaged
+Seconds since start: 20
+
+stamp: 
+  secs: 1513107057
+  nsecs: 114309072
+keyphrase: not_engaged
+Seconds since start: 31
+
+stamp: 
+  secs: 1513107059
+  nsecs: 114272117
+keyphrase: disinterested
+Seconds since start: 33
+
+stamp: 
+  secs: 1513107086
+  nsecs: 115315914
+keyphrase: engaged
+Seconds since start: 60
+
+stamp: 
+  secs: 1513107087
+  nsecs: 114763021
+keyphrase: not_engaged
+Seconds since start: 61
+
+stamp: 
+  secs: 1513107089
+  nsecs: 114793062
+keyphrase: disinterested
+Seconds since start: 63
+
+stamp: 
+  secs: 1513107098
+  nsecs: 114546060
+keyphrase: engaged
+Seconds since start: 72
+
+stamp: 
+  secs: 1513107099
+  nsecs: 114619016
+keyphrase: not_engaged
+Seconds since start: 73
+
+stamp: 
+  secs: 1513107101
+  nsecs: 114562988
+keyphrase: disinterested
+Seconds since start: 75
+
+stamp: 
+  secs: 1513107114
+  nsecs: 114157915
+keyphrase: engaged
+Seconds since start: 88
+
+stamp: 
+  secs: 1513107197
+  nsecs: 114347934
+keyphrase: disinterested
+Seconds since start: 171
+
+stamp: 
+  secs: 1513107201
+  nsecs: 114703893
+keyphrase: engaged
+Seconds since start: 175
+

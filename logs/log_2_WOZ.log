@@ -1,0 +1,64 @@
+stamp: 
+  secs: 1513107979
+  nsecs:  17355918
+keyphrase: not_engaged
+
+stamp: 
+  secs: 1513107981
+  nsecs:  18265008
+keyphrase: engaged
+
+stamp: 
+  secs: 1513107981
+  nsecs: 153722047
+keyphrase: START
+Seconds since start: 0
+
+stamp: 
+  secs: 1513107982
+  nsecs:  18209934
+keyphrase: engaged
+Seconds since start: 1
+
+stamp: 
+  secs: 1513107995
+  nsecs:  17487049
+keyphrase: disinterested
+Seconds since start: 14
+
+stamp: 
+  secs: 1513108002
+  nsecs:  17859935
+keyphrase: not_engaged
+Seconds since start: 21
+
+stamp: 
+  secs: 1513108050
+  nsecs:  18129110
+keyphrase: engaged
+Seconds since start: 69
+
+stamp: 
+  secs: 1513108128
+  nsecs:  18170118
+keyphrase: thinking
+Seconds since start: 147
+
+stamp: 
+  secs: 1513108130
+  nsecs:  18196105
+keyphrase: engaged
+Seconds since start: 149
+
+stamp: 
+  secs: 1513108158
+  nsecs:  17421007
+keyphrase: disinterested
+Seconds since start: 177
+
+stamp: 
+  secs: 1513108163
+  nsecs:  17709970
+keyphrase: engaged
+Seconds since start: 182
+
