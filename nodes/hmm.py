@@ -334,40 +334,40 @@ class GazeHMM():
         print 'Who is talking changed: %s' % self.who_is_talking
         who_is_talking_changed = True
 
-      if gaze_o and speech_o:
-        #print "Best guess: " + self.cur_state()
-        if self.who_is_talking == 'robot_speech':
-          cur_obs = gaze_o
-        else:
-          cur_obs = gaze_o + speech_o
-        self.belief = self.transition()
-        self.belief = self.observe(cur_obs)
-        self.beliefs.append(self.cur_state())
-
-      if who_is_talking_changed:
-        if self.who_is_talking == 'robot_speech':
-          cur_convo = self.conversation[self.conversation_state]
-          self.talker.publish(speech('start_robot', cur_convo))
-          if self.beliefs[-1] == 'engaged':
-            self.talker.publish(speech('continue', []))
-        else:
-          self.talker.publish(speech('start_human', []))
-          self.conversation_state += 1
-
-      if len(self.beliefs) > 1:
-        if self.beliefs[-1] != self.beliefs[-2]:
-          prev_state = self.beliefs[-2]
-          next_state = self.beliefs[-1]
+      if self.averting_state == "normal" or self.experiment_type != "HMM":
+        if gaze_o and speech_o:
+          #print "Best guess: " + self.cur_state()
           if self.who_is_talking == 'robot_speech':
-            print("Doing robot talking action!!!!!!")
-            self.robot_talking_action(prev_state, next_state)
+            cur_obs = gaze_o
           else:
-            self.robot_talking_action(prev_state, next_state)
+            cur_obs = gaze_o + speech_o
+          self.belief = self.transition()
+          self.belief = self.observe(cur_obs)
+          self.beliefs.append(self.cur_state())
+
+        if who_is_talking_changed:
+          if self.who_is_talking == 'robot_speech':
+            cur_convo = self.conversation[self.conversation_state]
+            self.talker.publish(speech('start_robot', cur_convo))
+            if self.beliefs[-1] == 'engaged':
+              self.talker.publish(speech('continue', []))
+          else:
+            self.talker.publish(speech('start_human', []))
+            self.conversation_state += 1
+
+        if len(self.beliefs) > 1:
+          if self.beliefs[-1] != self.beliefs[-2]:
+            prev_state = self.beliefs[-2]
+            next_state = self.beliefs[-1]
+            if self.who_is_talking == 'robot_speech':
+              print("Doing robot talking action!!!!!!")
+              self.robot_talking_action(prev_state, next_state)
+            else:
+              self.robot_talking_action(prev_state, next_state)
+      else:
+        print "AVERTING GAZE, HOLDING STATE CONSTANT, RUNNING NO ACTIONS"
         
-      #print '\r'
-      #print "Belief: " + self.cur_state()
-      #print '\r'
-      #print self.belief
+      print "Belief: " + self.cur_state()
       beliefMsg = StampedString()
       beliefMsg.keyphrase = str(self.cur_state())
       beliefMsg.stamp = rospy.get_rostime()

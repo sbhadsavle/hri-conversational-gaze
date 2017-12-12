@@ -54,6 +54,7 @@ class RobotSpeech():
       self.interrupt_list.extend(cmd.data)
       if self.speech_state != "INTERRUPT":
         self.speech_state = "INTERRUPT"
+        print "TERM"
         self.terminate()
     if cmd.cmd == 'continue':
       if self.speech_state == "INTERRUPT":
@@ -85,6 +86,7 @@ class RobotSpeech():
     def done_talking():
       self.talking = False
       self.cur_speech = None
+      self.broadcast.publish('normal')
 
     wav_file = os.path.join(data_path, speech)
     cmd = ['aplay', wav_file]
@@ -117,7 +119,6 @@ class RobotSpeech():
       if self.residual:
         self.talk_list.insert(0, self.residual)
         self.residual
-    
 
   def run(self):
     rospy.init_node('RobotSpeech')
