@@ -1,0 +1,128 @@
+stamp: 
+  secs: 1513273678
+  nsecs:  71635007
+keyphrase: not_engaged
+
+stamp: 
+  secs: 1513273681
+  nsecs:  72163105
+keyphrase: engaged
+
+stamp: 
+  secs: 1513273681
+  nsecs: 212829113
+keyphrase: START
+Seconds since start: 0
+
+stamp: 
+  secs: 1513273682
+  nsecs:  72577953
+keyphrase: engaged
+Seconds since start: 1
+
+stamp: 
+  secs: 1513273717
+  nsecs: 112610101
+keyphrase: not_engaged
+
+stamp: 
+  secs: 1513273720
+  nsecs: 113236904
+keyphrase: engaged
+
+stamp: 
+  secs: 1513273720
+  nsecs: 285208940
+keyphrase: START
+Seconds since start: 0
+
+stamp: 
+  secs: 1513273721
+  nsecs: 113375902
+keyphrase: engaged
+Seconds since start: 1
+
+stamp: 
+  secs: 1513273772
+  nsecs: 113766908
+keyphrase: not_engaged
+Seconds since start: 52
+
+stamp: 
+  secs: 1513273773
+  nsecs: 113800048
+keyphrase: engaged
+Seconds since start: 53
+
+stamp: 
+  secs: 1513273775
+  nsecs: 113667964
+keyphrase: not_engaged
+Seconds since start: 55
+
+stamp: 
+  secs: 1513273776
+  nsecs: 113076925
+keyphrase: disinterested
+Seconds since start: 56
+
+stamp: 
+  secs: 1513273819
+  nsecs: 113210916
+keyphrase: engaged
+Seconds since start: 99
+
+stamp: 
+  secs: 1513273822
+  nsecs: 113811016
+keyphrase: disinterested
+Seconds since start: 102
+
+stamp: 
+  secs: 1513273826
+  nsecs: 113205909
+keyphrase: engaged
+Seconds since start: 106
+
+stamp: 
+  secs: 1513273896
+  nsecs: 113903999
+keyphrase: disinterested
+Seconds since start: 176
+
+stamp: 
+  secs: 1513273904
+  nsecs: 113599061
+keyphrase: not_engaged
+Seconds since start: 184
+
+stamp: 
+  secs: 1513273921
+  nsecs: 113058090
+keyphrase: engaged
+Seconds since start: 201
+
+stamp: 
+  secs: 1513273926
+  nsecs: 113616943
+keyphrase: disinterested
+Seconds since start: 206
+
+stamp: 
+  secs: 1513273933
+  nsecs: 113259077
+keyphrase: engaged
+Seconds since start: 213
+
+stamp: 
+  secs: 1513273948
+  nsecs: 113636970
+keyphrase: disinterested
+Seconds since start: 228
+
+stamp: 
+  secs: 1513273952
+  nsecs: 113329887
+keyphrase: engaged
+Seconds since start: 232
+
